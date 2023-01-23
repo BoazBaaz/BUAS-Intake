@@ -1,10 +1,10 @@
 #pragma once
 
 #include "surface.h"
+#include "template.h"
 #include "SDL_Scancode.h"
 #include <iostream>
 #include <string>
-#include <chrono>
 
 namespace Tmpl8 {
 	namespace Input {
@@ -28,41 +28,26 @@ namespace Tmpl8 {
 		};
 	};
 
-	struct Vector2 { 
-		// Variables
-		double x, y; 
-
-		// Constructor
-		Vector2(double x = 0, double y = 0) : x(x), y(y) {};
-
-		// Operators
-		Vector2 operator =(const Vector2& v) { x = v.x; y = v.y; return *this; };
-		Vector2 operator +(const Vector2& v) const { return Vector2(x + v.x, y + v.y); }
-		Vector2 operator -(const Vector2& v) const { return Vector2(x - v.x, y - v.y); }
-		Vector2 operator +=(const Vector2& v) { x += v.x; y += v.y; return *this; }
-		Vector2 operator -=(const Vector2& v) { x -= v.x; y -= v.y; return *this; }
-	};
 	struct StaticObject {
 		// Variables
 		Sprite& sprite;
-		Vector2 position;
+		vec2 position;
 
 		// Constructor
-		StaticObject(Sprite& sprite, Vector2 position) : 
+		StaticObject(Sprite& sprite, vec2 position) :
 			sprite(sprite), position(position) 
 		{};
 	};
 	struct DynamicObject {
 		// Variables
-		Sprite& sprite;
-		Vector2 position;
-		Vector2 velocity;
-		Vector2 acceleration;
-		double mass;
+		Sprite& m_Sprite;
+		vec2 m_Position;
+		vec2 m_Velocity;
+		vec2 m_Acceleration;
 
 		// Constructor
-		DynamicObject(Sprite& sprite, Vector2 position, Vector2 velocity, Vector2 acceleration, double mass) : 
-			position(position), sprite(sprite), velocity(velocity), acceleration(acceleration), mass(mass)
+		DynamicObject(Sprite& sprite, vec2 position, vec2 velocity, vec2 acceleration) :
+			m_Sprite(sprite), m_Position(position), m_Velocity(velocity), m_Acceleration(acceleration)
 		{};
 	};
 
@@ -102,7 +87,7 @@ namespace Tmpl8 {
 		enum Scene { main, game };
 
 		Surface* screen;
-		Scene curScene;
+		Scene curScene = Scene::main;
 
 		const double gravity = 9.81;
 
