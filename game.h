@@ -40,14 +40,14 @@ namespace Tmpl8 {
 	};
 	struct DynamicObject {
 		// Variables
-		Sprite& m_Sprite;
-		vec2 m_Position;
-		vec2 m_Velocity;
-		vec2 m_Acceleration;
+		Sprite& sprite;
+		vec2 pos;
+		vec2 vel;
+		vec2 acc;
 
 		// Constructor
 		DynamicObject(Sprite& sprite, vec2 position, vec2 velocity, vec2 acceleration) :
-			m_Sprite(sprite), m_Position(position), m_Velocity(velocity), m_Acceleration(acceleration)
+			sprite(sprite), pos(position), vel(velocity), acc(acceleration)
 		{};
 	};
 
@@ -57,7 +57,7 @@ namespace Tmpl8 {
 		void SetTarget(Surface* surface) { screen = surface; }
 		void Init();
 		void Shutdown();
-		void Tick(float _deltaTime);
+		void Tick(float dt);
 		void UpdateInputState() {
 			for (int i = 0; i < Input::MAX_KEYS; i++) {
 				if (keyboard.keys[i] == Input::InputState::Down) { keyboard.keys[i] = Input::InputState::Pressed; }
@@ -90,15 +90,17 @@ namespace Tmpl8 {
 		Scene curScene = Scene::main;
 
 		const double gravity = 9.81;
+		const double deceleration = 0.9;
 
 		Input::Keyboard keyboard;
 		Input::Mouse mouse;
 		
 		// Physics
-		void VelocityVerlet(DynamicObject &dObj, float dt);
+		void CalculatePhysics(DynamicObject &p, float dt);
+		void CollisionDetection(DynamicObject &p);
 
 		// Scene
-		void ChangeScene(Scene newScene);
+		void ChangeScene(Scene newScene) { curScene = newScene; screen->Clear(0); };
 
 		// Input
 		bool Button(StaticObject sObj);

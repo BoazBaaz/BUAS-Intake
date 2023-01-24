@@ -339,6 +339,7 @@ int main(int argc, char** argv) {
 		}
 		// calculate frame time and pass it to game->Tick
 		float elapsedTime = t.elapsed();
+		elapsedTime /= 100; // beter deltaTime value
 		t.reset();
 
 		game->Tick(elapsedTime);

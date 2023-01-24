@@ -10,7 +10,7 @@ namespace Tmpl8 {
 
 	// Variables (Game Scene)
 	Sprite ballSprite(new Surface("assets/ball.png"), 1);
-	DynamicObject player(ballSprite, vec2(375, 462), vec2(1, -50), vec2(10, -100));
+	DynamicObject player(ballSprite, vec2(375, 462), vec2(10, -100), vec2(10, 10));
 
 	// On start
 	void Game::Init() {
@@ -21,7 +21,7 @@ namespace Tmpl8 {
 	}
 
 	// Every frame
-	void Game::Tick(float _deltaTime) {
+	void Game::Tick(float dt) {
 		screen->Clear(0);
 
 		switch (curScene) {
@@ -31,28 +31,30 @@ namespace Tmpl8 {
 				}
 				break;
 			case game:
-				VelocityVerlet(player, _deltaTime);
-				player.m_Sprite.Draw(screen, player.m_Position.x, player.m_Position.y);
+				CalculatePhysics(player, dt);
+				CollisionDetection(player);
+				player.sprite.Draw(screen, player.pos.x, player.pos.y);
 				break;
 			default:
 				break;
 		}
 	}
 
-
-	// Fuctions
-	void Game::VelocityVerlet(DynamicObject &dObj, float dt) {
-		dt /= 100;
-		dObj.m_Position.x += dObj.m_Velocity.x * dt + 0.5f * dObj.m_Acceleration.x * dt * dt;
-		dObj.m_Position.y += dObj.m_Velocity.y * dt + 0.5f * dObj.m_Acceleration.y * dt * dt;
-		dObj.m_Velocity += dObj.m_Acceleration * dt;
-		dObj.m_Acceleration.x *= 0.9;
-		dObj.m_Acceleration.y = gravity * 0.9;
+	void Game::CalculatePhysics(DynamicObject &p, float dt) {
+		p.pos += p.vel * dt + (p.acc/2) * (dt * dt);
+		p.vel += p.acc * dt;
+		p.acc.x *= deceleration;
+		p.acc.y = gravity * deceleration; 
 	}
 
-
-	void Game::ChangeScene(Scene newScene) {
-		curScene = newScene; screen->Clear(0);
+	void Game::CollisionDetection(DynamicObject& p) {
+		if (p.pos.x < 0 || p.pos.x + p.sprite.GetWidth() > screen->GetWidth()) {
+			p.vel.x = -p.vel.x;
+			p.acc.x = -p.acc.x;
+		}
+		if (p.pos.y < 0 || p.pos.y + p.sprite.GetHeight() > screen->GetHeight()) {
+			p.vel.y = -p.vel.y;
+		}
 	}
 
 	bool Game::Button(StaticObject sObj) {

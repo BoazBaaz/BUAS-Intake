@@ -1,5 +1,6 @@
 ﻿  game.cpp
-C:\Users\BoasB\Work\BUAS\BUAS-Intake\game.cpp(35,72): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\BoasB\Work\BUAS\BUAS-Intake\game.cpp(35,51): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\BoasB\Work\BUAS\BUAS-Intake\game.cpp(50,35): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-  BallGame.vcxproj -> C:\Users\BoasB\Work\BUAS\BUAS-Intake\BallGame_x64_debug.exe
+C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.cpp(36,56): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.cpp(36,42): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.cpp(46,14): warning C4244: '*=': conversion from 'const double' to 'float', possible loss of data
+C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.cpp(48,21): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  BallGame.vcxproj -> C:\Users\BoasB\Work\BUAS\Intake\BallGame\BallGame_x64_debug.exe
