@@ -10,7 +10,7 @@ namespace Tmpl8 {
 
 	// Variables (Game Scene)
 	Sprite ballSprite(new Surface("assets/ball.png"), 1);
-	DynamicObject player(ballSprite, vec2(175, 462), vec2(1, -50), vec2(100, -100));
+	DynamicObject player(ballSprite, vec2(375, 462), vec2(1, -50), vec2(10, -100));
 
 	// On start
 	void Game::Init() {
@@ -43,7 +43,8 @@ namespace Tmpl8 {
 	// Fuctions
 	void Game::VelocityVerlet(DynamicObject &dObj, float dt) {
 		dt /= 100;
-		dObj.m_Position += (dObj.m_Velocity * dt) + ((dObj.m_Acceleration / 2) * (dt * dt));
+		dObj.m_Position.x += dObj.m_Velocity.x * dt + 0.5f * dObj.m_Acceleration.x * dt * dt;
+		dObj.m_Position.y += dObj.m_Velocity.y * dt + 0.5f * dObj.m_Acceleration.y * dt * dt;
 		dObj.m_Velocity += dObj.m_Acceleration * dt;
 		dObj.m_Acceleration.x *= 0.9;
 		dObj.m_Acceleration.y = gravity * 0.9;
