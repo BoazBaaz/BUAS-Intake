@@ -90,14 +90,13 @@ namespace Tmpl8 {
 		Scene curScene = Scene::main;
 
 		const double gravity = 9.81;
-		const double deceleration = 0.9;
+		const double deceleration = 0.995;
 
 		Input::Keyboard keyboard;
 		Input::Mouse mouse;
 		
 		// Physics
-		void CalculatePhysics(DynamicObject &p, float dt);
-		void CollisionDetection(DynamicObject &p);
+		void Physics(DynamicObject &p, float dt);
 
 		// Scene
 		void ChangeScene(Scene newScene) { curScene = newScene; screen->Clear(0); };

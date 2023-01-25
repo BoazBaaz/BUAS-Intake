@@ -10,7 +10,7 @@ namespace Tmpl8 {
 
 	// Variables (Game Scene)
 	Sprite ballSprite(new Surface("assets/ball.png"), 1);
-	DynamicObject player(ballSprite, vec2(375, 462), vec2(10, -100), vec2(10, 10));
+	DynamicObject player(ballSprite, vec2(375, 462), vec2(40, -100), vec2(0, 0));
 
 	// On start
 	void Game::Init() {
@@ -31,28 +31,40 @@ namespace Tmpl8 {
 				}
 				break;
 			case game:
-				CalculatePhysics(player, dt);
-				CollisionDetection(player);
+				Physics(player, dt);
 				player.sprite.Draw(screen, player.pos.x, player.pos.y);
+				if (GetKey(SDL_SCANCODE_W)) {
+					player.vel.y = 100;
+				}
+				if (GetKey(SDL_SCANCODE_A)) {
+					player.vel.x = -100;
+				}
+				if (GetKey(SDL_SCANCODE_D)) {
+					player.vel.x = 100;
+				}
 				break;
 			default:
 				break;
 		}
 	}
 
-	void Game::CalculatePhysics(DynamicObject &p, float dt) {
+	void Game::Physics(DynamicObject &p, float dt) {
+		// Update position
 		p.pos += p.vel * dt + (p.acc/2) * (dt * dt);
+
+		// Update velocity
 		p.vel += p.acc * dt;
+		p.vel *= deceleration;
+
+		// Update acceleration
 		p.acc.x *= deceleration;
 		p.acc.y = gravity * deceleration; 
-	}
 
-	void Game::CollisionDetection(DynamicObject& p) {
-		if (p.pos.x < 0 || p.pos.x + p.sprite.GetWidth() > screen->GetWidth()) {
+		// Collision detection
+		if (p.pos.x < 0 || p.pos.x + p.sprite.GetWidth() > ScreenWidth) {
 			p.vel.x = -p.vel.x;
-			p.acc.x = -p.acc.x;
 		}
-		if (p.pos.y < 0 || p.pos.y + p.sprite.GetHeight() > screen->GetHeight()) {
+		if (p.pos.y < 0 || p.pos.y + p.sprite.GetHeight() > ScreenHeight) {
 			p.vel.y = -p.vel.y;
 		}
 	}
