@@ -35,8 +35,8 @@ namespace Tmpl8 {
 
 		// Constructor
 		StaticObject(Sprite& sprite, vec2 position) :
-			sprite(sprite), position(position) 
-		{};
+			sprite(sprite), position(position) {
+		};
 	};
 	struct DynamicObject {
 		// Variables
@@ -47,11 +47,11 @@ namespace Tmpl8 {
 
 		// Constructor
 		DynamicObject(Sprite& sprite, vec2 position, vec2 velocity, vec2 acceleration) :
-			sprite(sprite), pos(position), vel(velocity), acc(acceleration)
-		{};
+			sprite(sprite), pos(position), vel(velocity), acc(acceleration) {
+		};
 	};
 
-	class Surface; 
+	class Surface;
 	class Game {
 	public:
 		void SetTarget(Surface* surface) { screen = surface; }
@@ -68,11 +68,11 @@ namespace Tmpl8 {
 				else if (mouse.buttons[i] == Input::InputState::Up) { mouse.buttons[i] = Input::InputState::Released; }
 			}
 		}
-		void KeyInput(int key, int state) { keyboard.keys[key] = InputStateMod((int)keyboard.keys[key], state); }
-		void MouseInput(int button, int state) { mouse.buttons[button] = InputStateMod((int)mouse.buttons[button], state); }
+		void KeyInput(int key, int state) { keyboard.keys[key] = InputStateMod((int) keyboard.keys[key], state); }
+		void MouseInput(int button, int state) { mouse.buttons[button] = InputStateMod((int) mouse.buttons[button], state); }
 		void MouseMove(int x, int y) {
 			mouse.position.x = x, mouse.position.y = y;
-			mouse.position.pixel = ( x + screen->GetWidth() * y );
+			mouse.position.pixel = (x + screen->GetWidth() * y);
 		}
 		Input::InputState InputStateMod(int curState, int newState) {
 			Input::InputState state;
@@ -82,7 +82,7 @@ namespace Tmpl8 {
 			if (!curState && newState) { state = Input::InputState::Down; }
 			return state;
 		}
-		
+
 	private:
 		enum Scene { main, game };
 
@@ -94,9 +94,9 @@ namespace Tmpl8 {
 
 		Input::Keyboard keyboard;
 		Input::Mouse mouse;
-		
+
 		// Physics
-		void Physics(DynamicObject &p, float dt);
+		void Physics(DynamicObject& p, float dt);
 
 		// Scene
 		void ChangeScene(Scene newScene) { curScene = newScene; screen->Clear(0); };
@@ -104,10 +104,10 @@ namespace Tmpl8 {
 		// Input
 		bool Button(StaticObject sObj);
 		bool GetKey(int key) { return (keyboard.keys[key] == Input::InputState::Pressed) ? true : false; };
-		bool GetKeyUp(int key) { return ( keyboard.keys[key] == Input::InputState::Up ) ? true : false; };
-		bool GetKeyDown(int key) { return ( keyboard.keys[key] == Input::InputState::Down ) ? true : false; };
+		bool GetKeyUp(int key) { return (keyboard.keys[key] == Input::InputState::Up) ? true : false; };
+		bool GetKeyDown(int key) { return (keyboard.keys[key] == Input::InputState::Down) ? true : false; };
 		bool GetMouseButton(int button) { return (mouse.buttons[button] == Input::InputState::Pressed) ? true : false; };
-		bool GetMouseButtonUp(int button) { return ( mouse.buttons[button] == Input::InputState::Up ) ? true : false; };
+		bool GetMouseButtonUp(int button) { return (mouse.buttons[button] == Input::InputState::Up) ? true : false; };
 		bool GetMouseButtonDown(int button) { return (mouse.buttons[button] == Input::InputState::Down) ? true : false; };
 	};
 };
