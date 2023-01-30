@@ -90,7 +90,7 @@ namespace Tmpl8 {
 		Scene curScene = Scene::main;
 
 		const double gravity = 9.81;
-		const double deceleration = 0.995;
+		const double deceleration = 0.9;
 
 		Input::Keyboard keyboard;
 		Input::Mouse mouse;

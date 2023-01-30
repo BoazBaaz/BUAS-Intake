@@ -10,7 +10,7 @@ namespace Tmpl8 {
 
 	// Variables (Game Scene)
 	Sprite ballSprite(new Surface("assets/ball.png"), 1);
-	DynamicObject player(ballSprite, vec2(375, 462), vec2(40, -100), vec2(0, 0));
+	DynamicObject player(ballSprite, vec2(375, 462), vec2(40, -100), vec2(10, 10));
 
 	// On start
 	void Game::Init() {
@@ -34,13 +34,13 @@ namespace Tmpl8 {
 				Physics(player, dt);
 				player.sprite.Draw(screen, player.pos.x, player.pos.y);
 				if (GetKey(SDL_SCANCODE_W)) {
-					player.acc.y -= 10 * dt;
+					player.acc.y -= 100 * dt;
 				}
 				if (GetKey(SDL_SCANCODE_A)) {
-					player.acc.x -= 10 * dt;
+					player.acc.x -= 100 * dt;
 				}
 				if (GetKey(SDL_SCANCODE_D)) {
-					player.acc.x += 10 * dt;
+					player.acc.x += 100 * dt;
 				}
 
 				std::cout << "Pos: x " << player.pos.x << ", y " << player.pos.y << std::endl;
@@ -57,22 +57,17 @@ namespace Tmpl8 {
 		p.pos += p.vel * dt + (p.acc / 2) * (dt * dt);
 
 		// Update velocity
-		// 1000 = 1000 + 10
-		// 1010
 		p.vel += p.acc * dt;
-		// 1010 = 1010 * 0.9
-		// 909
-		p.vel *= deceleration;
+		p.vel.x *= deceleration * dt;
+		p.vel.y *= gravity * deceleration * dt;
 
 		// Update acceleration
-		p.acc.x *= deceleration;
-		p.acc.y = gravity * deceleration;
-
+		p.acc.x *= deceleration * dt;
+		p.acc.y *= gravity * deceleration * dt;
 
 		// Collision detection
 		if (p.pos.x < 0 || p.pos.x + p.sprite.GetWidth() > ScreenWidth) {
 			p.pos.x = std::max((float)0, std::min(p.pos.x, (float)ScreenWidth));
-			// 900.98 = -900.98
 			p.vel.x = -p.vel.x;
 			p.acc.x = -p.acc.x;
 		}
