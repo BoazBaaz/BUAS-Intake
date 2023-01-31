@@ -41,13 +41,12 @@ namespace Tmpl8 {
 	struct DynamicObject {
 		// Variables
 		Sprite& sprite;
-		vec2 pos;
-		vec2 vel;
-		vec2 acc;
+		vec2 pos, vel,  acc;
+		float mass;
 
 		// Constructor
-		DynamicObject(Sprite& sprite, vec2 position, vec2 velocity, vec2 acceleration) :
-			sprite(sprite), pos(position), vel(velocity), acc(acceleration) {
+		DynamicObject(Sprite& sprite, vec2 position, vec2 velocity, vec2 acceleration, double mass) :
+			sprite(sprite), pos(position), vel(velocity), acc(acceleration), mass(mass){
 		};
 	};
 
@@ -89,14 +88,15 @@ namespace Tmpl8 {
 		Surface* screen;
 		Scene curScene = Scene::main;
 
-		const double gravity = 9.81;
-		const double deceleration = 0.9;
+		const float gravity = 9.81;
+		const float deceleration = 0.995;
 
 		Input::Keyboard keyboard;
 		Input::Mouse mouse;
 
 		// Physics
 		void Physics(DynamicObject& p, float dt);
+		void ApplyForce(DynamicObject& p, vec2 force) { p.acc += (force / p.mass); }
 
 		// Scene
 		void ChangeScene(Scene newScene) { curScene = newScene; screen->Clear(0); };

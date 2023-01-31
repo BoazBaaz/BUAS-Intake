@@ -10,7 +10,9 @@ namespace Tmpl8 {
 
 	// Variables (Game Scene)
 	Sprite ballSprite(new Surface("assets/ball.png"), 1);
-	DynamicObject player(ballSprite, vec2(375, 462), vec2(40, -100), vec2(10, 10));
+	DynamicObject player(ballSprite, vec2(375, 462), vec2(0, 0), vec2(0, 0), 1);
+
+	float boost = 0;
 
 	// On start
 	void Game::Init() {
@@ -34,15 +36,22 @@ namespace Tmpl8 {
 				Physics(player, dt);
 				player.sprite.Draw(screen, player.pos.x, player.pos.y);
 				if (GetKey(SDL_SCANCODE_W)) {
-					player.acc.y -= 100 * dt;
+					player.acc.y = -10;
 				}
 				if (GetKey(SDL_SCANCODE_A)) {
-					player.acc.x -= 100 * dt;
+					player.acc.x = -10;
 				}
 				if (GetKey(SDL_SCANCODE_D)) {
-					player.acc.x += 100 * dt;
+					player.acc.x = 10;
 				}
 
+				if (GetKey(SDL_SCANCODE_SPACE)) {
+					player.pos = {player.pos.x, (float)ScreenHeight - player.sprite.GetHeight()};
+					boost = (boost < 100) ? (boost + dt) : 100;
+					if (GetKeyUp(SDL_SCANCODE_SPACE)) {
+						ApplyForce(player, {0, (player.mass * boost) * gravity});
+					}
+				}
 				std::cout << "Pos: x " << player.pos.x << ", y " << player.pos.y << std::endl;
 				std::cout << "Vel: x " << player.vel.x << ", y " << player.vel.y << std::endl;
 				std::cout << "Acc: x " << player.acc.x << ", y " << player.acc.y << std::endl;
@@ -53,21 +62,12 @@ namespace Tmpl8 {
 	}
 
 	void Game::Physics(DynamicObject& p, float dt) {
-		// Update position
-		p.pos += p.vel * dt + (p.acc / 2) * (dt * dt);
-
-		// Update velocity
-		p.vel += p.acc * dt;
-		p.vel.x *= deceleration * dt;
-		p.vel.y *= gravity * deceleration * dt;
-
-		// Update acceleration
-		p.acc.x *= deceleration * dt;
-		p.acc.y *= gravity * deceleration * dt;
+		// Apply gravity
+		ApplyForce(p, {0, p.mass * gravity});
 
 		// Collision detection
 		if (p.pos.x < 0 || p.pos.x + p.sprite.GetWidth() > ScreenWidth) {
-			p.pos.x = std::max((float)0, std::min(p.pos.x, (float)ScreenWidth));
+			p.pos.x = std::max((float) 0, std::min(p.pos.x, (float) ScreenWidth));
 			p.vel.x = -p.vel.x;
 			p.acc.x = -p.acc.x;
 		}
@@ -76,8 +76,17 @@ namespace Tmpl8 {
 			p.vel.y = -p.vel.y;
 			p.acc.y = -p.acc.y;
 		}
-	}
 
+		// Update position using the Velocity Verlet method
+		p.pos += p.vel * dt + (p.acc / 2) * (dt * dt);
+
+		// Update the velocity using the Velocity Verlet method
+		p.vel += (p.acc / 2) * dt;
+		// Slow down the velocity over time
+		p.vel *= deceleration;
+
+		p.acc = {0, 0};
+	}
 
 	bool Game::Button(StaticObject sObj) {
 		sObj.sprite.SetFrame(0);
