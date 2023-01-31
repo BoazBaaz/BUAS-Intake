@@ -436,4 +436,7 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,visualstudio
 .vs/BallGame/v17/Browse.VC.db
+<<<<<<< HEAD
+>>>>>>> b5e8c91b37e0299177d09276cdd57698105951d9
+=======
 >>>>>>> b5e8c91b37e0299177d09276cdd57698105951d9
