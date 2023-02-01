@@ -436,3 +436,16 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,visualstudio
 .vs/BallGame/v17/Browse.VC.db
+Debug/vc143.pdb
+Debug/BallGame_x64_debug.exe.recipe
+Debug/BallGame.tlog/link.write.1.tlog
+Debug/BallGame.tlog/link.read.1.tlog
+Debug/BallGame.tlog/CL.write.1.tlog
+Debug/BallGame.tlog/CL.read.1.tlog
+Debug/BallGame.tlog/CL.command.1.tlog
+Debug/BallGame.tlog/BallGame.lastbuildstate
+Debug/BallGame.log
+BallGame_x64_debug.pdb
+.vs/BallGame/v17/ipch/AutoPCH/87cc327bc205a88e/GAME.ipch
+.vs/BallGame/v17/Browse.VC.db
+.vs/BallGame/v17/.suo
