@@ -10,7 +10,7 @@ namespace Tmpl8 {
 
 	// Variables (Game Scene)
 	Sprite ballSprite(new Surface("assets/ball.png"), 1);
-	DynamicObject player(ballSprite, vec2(375, 462), vec2(0, 0), vec2(0, 0), 1);
+	DynamicObject player(ballSprite, vec2(375, 462), vec2(4, -30), vec2(0, 0));
 
 	float boost = 0;
 
@@ -33,10 +33,11 @@ namespace Tmpl8 {
 				}
 				break;
 			case game:
-				Physics(player, dt);
-				player.sprite.Draw(screen, player.pos.x, player.pos.y);
 				if (GetKey(SDL_SCANCODE_W)) {
 					player.acc.y = -10;
+				}
+				if (GetKey(SDL_SCANCODE_S)) {
+					player.acc.y = 10;
 				}
 				if (GetKey(SDL_SCANCODE_A)) {
 					player.acc.x = -10;
@@ -46,12 +47,16 @@ namespace Tmpl8 {
 				}
 
 				if (GetKey(SDL_SCANCODE_SPACE)) {
-					player.pos = {player.pos.x, (float)ScreenHeight - player.sprite.GetHeight()};
+					player.vel.y += 100;
 					boost = (boost < 100) ? (boost + dt) : 100;
 					if (GetKeyUp(SDL_SCANCODE_SPACE)) {
-						ApplyForce(player, {0, (player.mass * boost) * gravity});
+						//ApplyForce(player, {0, (player.mass * boost) * gravity});
 					}
 				}
+
+				Physics(player, dt);
+				player.sprite.Draw(screen, player.pos.x, player.pos.y);
+
 				std::cout << "Pos: x " << player.pos.x << ", y " << player.pos.y << std::endl;
 				std::cout << "Vel: x " << player.vel.x << ", y " << player.vel.y << std::endl;
 				std::cout << "Acc: x " << player.acc.x << ", y " << player.acc.y << std::endl;
@@ -62,29 +67,27 @@ namespace Tmpl8 {
 	}
 
 	void Game::Physics(DynamicObject& p, float dt) {
-		// Apply gravity
-		ApplyForce(p, {0, p.mass * gravity});
+		// Apply gravity to the velocity 
+		p.vel.y += gravity * dt;
+
+		// Update the velocity
+		p.vel += p.acc * dt;
+		p.vel *= deceleration;
+
+		// Update position
+		p.pos += p.vel;
 
 		// Collision detection
 		if (p.pos.x < 0 || p.pos.x + p.sprite.GetWidth() > ScreenWidth) {
-			p.pos.x = std::max((float) 0, std::min(p.pos.x, (float) ScreenWidth));
+			p.pos.x = std::max((float) 0, std::min(p.pos.x, (float) ScreenWidth - p.sprite.GetWidth()));
 			p.vel.x = -p.vel.x;
-			p.acc.x = -p.acc.x;
 		}
 		if (p.pos.y < 0 || p.pos.y + p.sprite.GetHeight() > ScreenHeight) {
-			p.pos.y = std::max((float) 0, std::min(p.pos.y, (float) ScreenHeight));
+			p.pos.y = std::max((float) 0, std::min(p.pos.y, (float) ScreenHeight - p.sprite.GetHeight()));
 			p.vel.y = -p.vel.y;
-			p.acc.y = -p.acc.y;
 		}
 
-		// Update position using the Velocity Verlet method
-		p.pos += p.vel * dt + (p.acc / 2) * (dt * dt);
-
-		// Update the velocity using the Velocity Verlet method
-		p.vel += (p.acc / 2) * dt;
-		// Slow down the velocity over time
-		p.vel *= deceleration;
-
+		// Reset the acceleration for the next caculation
 		p.acc = {0, 0};
 	}
 
