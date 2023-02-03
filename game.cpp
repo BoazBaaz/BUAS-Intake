@@ -10,7 +10,7 @@ namespace Tmpl8 {
 
 	// Variables (Game Scene)
 	Sprite ballSprite(new Surface("assets/ball.png"), 1);
-	DynamicObject player(ballSprite, vec2(375, 462), vec2(4, -30), vec2(0, 0));
+	DynamicObject player(ballSprite, vec2(375, 462), vec2(4, -20), vec2(0, 0));
 
 	float boost = 0;
 

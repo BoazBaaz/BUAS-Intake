@@ -341,7 +341,7 @@ int main(int argc, char** argv) {
 		float elapsedTime = t.elapsed();
 		t.reset();
 
-		elapsedTime /= 100; // better deltaTime value
+		elapsedTime /= 1000; // better deltaTime value
 
 		game->Tick(elapsedTime);
 		game->UpdateInputState();
