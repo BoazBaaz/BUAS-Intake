@@ -449,8 +449,11 @@ BallGame_x64_debug.pdb
 .vs/BallGame/v17/ipch/AutoPCH/87cc327bc205a88e/GAME.ipch
 .vs/BallGame/v17/Browse.VC.db
 .vs/BallGame/v17/.suo
+<<<<<<< HEAD
 *.tlog
 *.recipe
 *.lastbuildstate
 *.log
 *.pdb
+=======
+>>>>>>> 97f3b359eb054db185ece3bab2fd8b39c86b9cca
