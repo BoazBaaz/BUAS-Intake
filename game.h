@@ -21,10 +21,8 @@ namespace Tmpl8 {
 		class Mouse {
 		public:
 			InputState buttons[MAX_BUTTONS];
-			struct Position {
-				double x, y;
-				int pixel;
-			} position;
+			vec2 position;
+			int pixel;
 		};
 	};
 
@@ -70,7 +68,7 @@ namespace Tmpl8 {
 		void MouseInput(int button, int state) { mouse.buttons[button] = InputStateMod((int) mouse.buttons[button], state); }
 		void MouseMove(int x, int y) {
 			mouse.position.x = x, mouse.position.y = y;
-			mouse.position.pixel = (x + screen->GetWidth() * y);
+			mouse.pixel = (x + screen->GetWidth() * y);
 		}
 		Input::InputState InputStateMod(int curState, int newState) {
 			Input::InputState state;
