@@ -10,9 +10,10 @@ namespace Tmpl8 {
 
 	// Variables (Game Scene)
 	Sprite ballSprite(new Surface("assets/ball.png"), 1);
-	DynamicObject player(ballSprite, vec2(375, 462), vec2(4, -30), vec2(0, 0));
+	DynamicObject player(ballSprite, vec2(375, 462), vec2(4, -20), vec2(0, 0));
 
 	float boost = 0;
+	bool groundHit = false;
 
 	// On start
 	void Game::Init() {
@@ -33,33 +34,29 @@ namespace Tmpl8 {
 				}
 				break;
 			case game:
-				if (GetKey(SDL_SCANCODE_W)) {
-					player.acc.y = -10;
-				}
-				if (GetKey(SDL_SCANCODE_S)) {
-					player.acc.y = 10;
-				}
-				if (GetKey(SDL_SCANCODE_A)) {
-					player.acc.x = -10;
-				}
-				if (GetKey(SDL_SCANCODE_D)) {
-					player.acc.x = 10;
-				}
 
+				// Update velocity down and reset velocity when groundHit
 				if (GetKey(SDL_SCANCODE_SPACE)) {
-					player.vel.y += 100;
-					boost = (boost < 100) ? (boost + dt) : 100;
-					if (GetKeyUp(SDL_SCANCODE_SPACE)) {
-						//ApplyForce(player, {0, (player.mass * boost) * gravity});
+					player.vel.y = 10;
+					if (groundHit) {
+						player.vel = {0, 0};
+						std::string bstr = std::to_string(boost);
+						screen->Print(&bstr[0], player.pos.x, player.pos.y - 10, 0xffffff);
+						boost = (boost < 3) ? (boost + dt * 3) : 3;
 					}
 				}
 
+				// Update velocity and reset boost
+				if (GetKeyUp(SDL_SCANCODE_SPACE)) {
+					player.vel = (mouse.position -player.pos) / 100;
+					player.vel *= boost;
+					boost = 0;
+				}
+				std::cout << "New Vel: " << player.vel.x << ", " << player.vel.y << std::endl;
+				std::cout << "Boost: " << boost << std::endl;
+
 				Physics(player, dt);
 				player.sprite.Draw(screen, player.pos.x, player.pos.y);
-
-				std::cout << "Pos: x " << player.pos.x << ", y " << player.pos.y << std::endl;
-				std::cout << "Vel: x " << player.vel.x << ", y " << player.vel.y << std::endl;
-				std::cout << "Acc: x " << player.acc.x << ", y " << player.acc.y << std::endl;
 				break;
 			default:
 				break;
@@ -68,7 +65,9 @@ namespace Tmpl8 {
 
 	void Game::Physics(DynamicObject& p, float dt) {
 		// Apply gravity to the velocity 
-		p.vel.y += gravity * dt;
+		if (!groundHit) {
+			p.vel.y += gravity * dt;
+		}
 
 		// Update the velocity
 		p.vel += p.acc * dt;
@@ -86,6 +85,14 @@ namespace Tmpl8 {
 			p.pos.y = std::max((float) 0, std::min(p.pos.y, (float) ScreenHeight - p.sprite.GetHeight()));
 			p.vel.y = -p.vel.y;
 		}
+
+		// Ground check
+		groundHit = (p.pos.y == (ScreenHeight - p.sprite.GetHeight())) ? true : false;
+
+		std::cout << "Pos: x " << player.pos.x << ", y " << player.pos.y << std::endl;
+		std::cout << "Vel: x " << player.vel.x << ", y " << player.vel.y << std::endl;
+		std::cout << "Acc: x " << player.acc.x << ", y " << player.acc.y << std::endl;
+		std::cout << "Ground Hit: " << groundHit << std::endl;
 
 		// Reset the acceleration for the next caculation
 		p.acc = {0, 0};
