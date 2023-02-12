@@ -93,6 +93,7 @@ namespace Tmpl8 {
 
 		// Physics
 		void Physics(DynamicObject& p, float dt);
+		void Collision(DynamicObject& p);
 
 		// Scene
 		void ChangeScene(Scene newScene) { curScene = newScene; screen->Clear(0); };

@@ -1,6 +1,12 @@
 ﻿  game.cpp
-C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.cpp(58,56): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.cpp(58,42): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.cpp(71,22): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.cpp(75,12): warning C4244: 'argument': conversion from 'const double' to 'float', possible loss of data
+C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.h(70,23): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.h(70,45): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.cpp(50,58): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.cpp(50,41): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.cpp(67,56): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.cpp(67,42): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.cpp(68,57): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.cpp(68,41): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.cpp(81,23): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.cpp(86,12): warning C4244: 'argument': conversion from 'const double' to 'float', possible loss of data
   BallGame.vcxproj -> C:\Users\BoasB\Work\BUAS\Intake\BallGame\BallGame_x64_debug.exe
