@@ -14,6 +14,7 @@
 //#define ADVANCEDGL
 
 #include "game.h"
+#include "input.h"
 
 #include <fcntl.h>
 #include <io.h>
@@ -162,6 +163,7 @@ static bool firstframe = true;
 
 Surface* surface = 0;
 Game* game = 0;
+Input* input = 0;
 SDL_Window* window = 0;
 
 #ifdef _MSC_VER
@@ -344,7 +346,7 @@ int main(int argc, char** argv) {
 		elapsedTime /= 1000; // better deltaTime value
 
 		game->Tick(elapsedTime);
-		game->UpdateInputState();
+		input->UpdateInputState();
 
 		// event loop
 		SDL_Event event;
@@ -359,14 +361,14 @@ int main(int argc, char** argv) {
 					if (event.key.keysym.sym == SDLK_ESCAPE) {
 						exitapp = 1;
 					}
-					game->KeyInput(event.key.keysym.scancode, event.key.state);
+					input->KeyInput(event.key.keysym.scancode, event.key.state);
 					break;
 				case SDL_MOUSEBUTTONUP:
 				case SDL_MOUSEBUTTONDOWN:
-					game->MouseInput(event.button.button, event.button.state);
+					input->MouseInput(event.button.button, event.button.state);
 					break;
 				case SDL_MOUSEMOTION:
-					game->MouseMove(event.motion.x, event.motion.y);
+					input->MouseMove(event.motion.x, event.motion.y);
 					break;
 				default:
 					break;

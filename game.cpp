@@ -1,19 +1,17 @@
 #include "game.h"
-#include <iostream>
-#include <string> 
 
 namespace Tmpl8 {
+
 	// Variables (Main Scene)
 	Sprite sbSprite(new Surface("assets/start_button.tga"), 2);
-	StaticObject startButton(sbSprite, vec2(300, 412));
-
+	Game::StaticObject startButton(sbSprite, vec2(300, 412));
 
 	// Variables (Game Scene)
 	Sprite ballSprite(new Surface("assets/ball.png"), 1);
-	DynamicObject player(ballSprite, vec2(375, 462), vec2(4, -20), vec2(0, 0));
+	Game::DynamicObject player(ballSprite, vec2(375, 462), vec2(4, -20), vec2(0, 0));
 
 	Sprite objSprite(new Surface("assets/balk.png"), 1);
-	StaticObject obj(objSprite, vec2(500, 200));
+	Game::StaticObject obj(objSprite, vec2(500, 200));
 
 	float boost = 0;
 	bool groundHit = false;
@@ -41,21 +39,21 @@ namespace Tmpl8 {
 			case game:
 
 				// Update velocity down and reset velocity when groundHit
-				if (GetKey(SDL_SCANCODE_SPACE)) {
+				if (input->GetKey(SDL_SCANCODE_SPACE)) {
 					player.vel.y = 10;
 					if (groundHit) {
 						player.vel = {0, 0};
 
 						std::string bstr = std::to_string(boost);
-						screen->Print(&bstr[0], player.pos.x, player.pos.y - 10, 0xffffff);
+						screen->Print(&bstr[0], (int)player.pos.x, (int)player.pos.y - 10, 0xffffff);
 
 						boost = (boost < 3) ? (boost + dt * 3) : 3;
 					}
 				}
 
 				// Update velocity and reset boost
-				if (GetKeyUp(SDL_SCANCODE_SPACE)) {
-					player.vel = (mouse.position - player.pos) / 100;
+				if (input->GetKeyUp(SDL_SCANCODE_SPACE)) {
+					player.vel = (input->mouse.position - player.pos) / 100;
 					player.vel *= boost;
 
 					boost = 0;
@@ -64,8 +62,8 @@ namespace Tmpl8 {
 				Physics(player, dt);
 				Collision(player);
 
-				player.sprite.Draw(screen, player.pos.x, player.pos.y);
-				obj.sprite.Draw(screen, obj.position.x, obj.position.y);
+				player.sprite.Draw(screen, (int)player.pos.x, (int)player.pos.y);
+				obj.sprite.Draw(screen, (int)obj.position.x, (int)obj.position.y);
 				break;
 			default:
 				break;
@@ -78,12 +76,12 @@ namespace Tmpl8 {
 
 		// Apply gravity to the velocity 
 		if (!groundHit) {
-			p.vel.y += gravity * dt;
+			p.vel.y += (float)gravity * dt;
 		}
 
 		// Update the velocity
 		p.vel += p.acc * dt;
-		p.vel *= deceleration;
+		p.vel *= (float)deceleration;
 
 		// Update position
 		p.pos += p.vel;
@@ -120,13 +118,13 @@ namespace Tmpl8 {
 	bool Game::Button(StaticObject sObj) {
 		sObj.sprite.SetFrame(0);
 		sObj.sprite.Draw(screen, (int) sObj.position.x, (int) sObj.position.y);
-		if (mouse.position.x >= (int) sObj.position.x && mouse.position.x <= (int) sObj.position.x + sObj.sprite.GetWidth()) {
-			if (mouse.position.y >= (int) sObj.position.y && mouse.position.y <= (int) sObj.position.y + sObj.sprite.GetHeight()) {
-				if (GetMouseButton(1)) {
+		if (input->mouse.position.x >= (int) sObj.position.x && input->mouse.position.x <= (int) sObj.position.x + sObj.sprite.GetWidth()) {
+			if (input->mouse.position.y >= (int) sObj.position.y && input->mouse.position.y <= (int) sObj.position.y + sObj.sprite.GetHeight()) {
+				if (input->GetMouseButton(1)) {
 					sObj.sprite.SetFrame(1);
 					sObj.sprite.Draw(screen, (int) sObj.position.x, (int) sObj.position.y);
 				}
-				if (GetMouseButtonUp(1)) {
+				if (input->GetMouseButtonUp(1)) {
 					return true;
 				}
 			}
