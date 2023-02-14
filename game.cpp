@@ -53,7 +53,7 @@ namespace Tmpl8 {
 
 				// Update velocity and reset boost
 				if (input->GetKeyUp(SDL_SCANCODE_SPACE)) {
-					player.vel = (input->mouse.position - player.pos) / 100;
+					player.vel = (input->GetMousePos() - player.pos) / 100;
 					player.vel *= boost;
 
 					boost = 0;
@@ -117,9 +117,9 @@ namespace Tmpl8 {
 
 	bool Game::Button(StaticObject sObj) {
 		sObj.sprite.SetFrame(0);
-		sObj.sprite.Draw(screen, (int) sObj.position.x, (int) sObj.position.y);
-		if (input->mouse.position.x >= (int) sObj.position.x && input->mouse.position.x <= (int) sObj.position.x + sObj.sprite.GetWidth()) {
-			if (input->mouse.position.y >= (int) sObj.position.y && input->mouse.position.y <= (int) sObj.position.y + sObj.sprite.GetHeight()) {
+		sObj.sprite.Draw(screen, (int)sObj.position.x, (int) sObj.position.y);
+		if (input->GetMousePos().x >= (int) sObj.position.x && input->GetMousePos().x <= (int) sObj.position.x + sObj.sprite.GetWidth()) {
+			if (input->GetMousePos().y >= (int) sObj.position.y && input->GetMousePos().y <= (int) sObj.position.y + sObj.sprite.GetHeight()) {
 				if (input->GetMouseButton(1)) {
 					sObj.sprite.SetFrame(1);
 					sObj.sprite.Draw(screen, (int) sObj.position.x, (int) sObj.position.y);

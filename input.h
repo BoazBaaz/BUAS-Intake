@@ -6,34 +6,38 @@
 
 namespace Tmpl8 {
 	class Input {
-	private:
 		enum class InputState { Released, Pressed, Up, Down };
-
-		const static int MAX_KEYS = 512;
-		const static int MAX_BUTTONS = 6;
-
-		int InputStateMod(int curState, int newState);
-
 	public:
+		// constructor / destructor
+		Input();
+		~Input();
+		// member data access
+		vec2 GetMousePos() { return m_Mouse.position; }
+		int GetMousePosPixel() { return m_Mouse.pixel; }
+		bool GetKey(int a_Key) { return (m_Keyboard.keys[a_Key] == InputState::Pressed) ? true : false; }
+		bool GetKeyUp(int a_Key) { return (m_Keyboard.keys[a_Key] == InputState::Up) ? true : false; }
+		bool GetKeyDown(int a_Key) { return (m_Keyboard.keys[a_Key] == InputState::Down) ? true : false; }
+		bool GetMouseButton(int a_Button) { return (m_Mouse.buttons[a_Button] == InputState::Pressed) ? true : false; }
+		bool GetMouseButtonUp(int a_Button) { return (m_Mouse.buttons[a_Button] == InputState::Up) ? true : false; }
+		bool GetMouseButtonDown(int a_Button) { return (m_Mouse.buttons[a_Button] == InputState::Down) ? true : false; }
+		// Special operations
+		void UpdateInputState();
+		void MouseMove(int a_X, int a_Y);
+		void KeyInput(int a_Key, int a_State);
+		void MouseInput(int a_Button, int a_State);
+		int InputStateMod(int a_CurState, int a_NewState);
+	private:
+		// static attributes
+		const static int m_MaxKeys = 512;
+		const static int m_MaxButtons = 6;
+		// attributes
 		struct Keyboard {
-			InputState keys[MAX_KEYS];
-		} keyboard;
+			InputState keys[m_MaxKeys] = {};
+		} m_Keyboard;
 		struct Mouse {
-			InputState buttons[MAX_BUTTONS];
+			InputState buttons[m_MaxButtons] = {};
 			vec2 position;
 			int pixel;
-		} mouse;
-
-		void UpdateInputState();
-		void KeyInput(int key, int state);
-		void MouseInput(int button, int state);
-		void MouseMove(int x, int y);
-
-		bool GetKey(int key) { return (keyboard.keys[key] == InputState::Pressed) ? true : false; };
-		bool GetKeyUp(int key) { return (keyboard.keys[key] == InputState::Up) ? true : false; };
-		bool GetKeyDown(int key) { return (keyboard.keys[key] == InputState::Down) ? true : false; };
-		bool GetMouseButton(int button) { return (mouse.buttons[button] == InputState::Pressed) ? true : false; };
-		bool GetMouseButtonUp(int button) { return (mouse.buttons[button] == InputState::Up) ? true : false; };
-		bool GetMouseButtonDown(int button) { return (mouse.buttons[button] == InputState::Down) ? true : false; };
+		} m_Mouse;
 	};
 }
