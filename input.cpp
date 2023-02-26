@@ -1,6 +1,15 @@
 #include "input.h"
 
 namespace Tmpl8 {
+	Input::Input() {
+		for (int i = 0; i < m_MaxKeys; i++) {
+			m_Keyboard.keys[i] = InputState::Released;
+		}
+		for (int i = 0; i < m_MaxButtons; i++) {
+			m_Mouse.buttons[i] = InputState::Released;
+		}
+	}
+
 	int Input::InputStateMod(int a_CurState, int a_NewState) {
 		if (!a_CurState && !a_NewState) { a_NewState = (int)InputState::Released; }
 		if (a_CurState && a_NewState) { a_NewState = (int)InputState::Pressed; }

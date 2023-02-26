@@ -162,8 +162,8 @@ int ACTWIDTH, ACTHEIGHT;
 static bool firstframe = true;
 
 Surface* surface = 0;
+Input* controls = 0;
 Game* game = 0;
-Input* input = 0;
 SDL_Window* window = 0;
 
 #ifdef _MSC_VER
@@ -304,13 +304,14 @@ int main(int argc, char** argv) {
 	window = SDL_CreateWindow(TemplateVersion, 100, 100, ScreenWidth, ScreenHeight, SDL_WINDOW_SHOWN);
 #endif
 	surface = new Surface(ScreenWidth, ScreenHeight);
+	controls = new Input();
 	surface->Clear(0);
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	SDL_Texture* frameBuffer = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, ScreenWidth, ScreenHeight);
 #endif
 	int exitapp = 0;
 	game = new Game();
-	game->SetTarget(surface);
+	game->SetTarget(surface, controls);
 	timer t;
 	t.reset();
 	while (!exitapp) {
@@ -346,7 +347,7 @@ int main(int argc, char** argv) {
 		elapsedTime /= 1000; // better deltaTime value
 
 		game->Tick(elapsedTime);
-		input->UpdateInputState();
+		controls->UpdateInputState();
 
 		// event loop
 		SDL_Event event;
@@ -361,14 +362,14 @@ int main(int argc, char** argv) {
 					if (event.key.keysym.sym == SDLK_ESCAPE) {
 						exitapp = 1;
 					}
-					input->KeyInput(event.key.keysym.scancode, event.key.state);
+					controls->KeyInput(event.key.keysym.scancode, event.key.state);
 					break;
 				case SDL_MOUSEBUTTONUP:
 				case SDL_MOUSEBUTTONDOWN:
-					input->MouseInput(event.button.button, event.button.state);
+					controls->MouseInput(event.button.button, event.button.state);
 					break;
 				case SDL_MOUSEMOTION:
-					input->MouseMove(event.motion.x, event.motion.y);
+					controls->MouseMove(event.motion.x, event.motion.y);
 					break;
 				default:
 					break;

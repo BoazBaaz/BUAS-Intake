@@ -9,6 +9,7 @@
 
 namespace Tmpl8 {
 	class Surface;
+	class Input;
 	class Game {
 	public:
 		struct StaticObject {
@@ -28,7 +29,7 @@ namespace Tmpl8 {
 			};
 		};
 
-		void SetTarget(Surface* surface) { screen = surface; }
+		void SetTarget(Surface* surface, Input* controls) { screen = surface; input = controls; }
 		void Init();
 		void Shutdown();
 		void Tick(float dt);
