@@ -10,7 +10,7 @@ namespace Tmpl8 {
 	public:
 		// constructor / destructor
 		Input();
-		~Input();
+		~Input() = default;
 		// member data access
 		vec2 GetMousePos() { return m_Mouse.position; }
 		int GetMousePosPixel() { return m_Mouse.pixel; }

@@ -39,19 +39,17 @@ namespace Tmpl8 {
 
 				// Update velocity down and reset velocity when groundHit
 				if (input->GetKey(SDL_SCANCODE_SPACE) && !groundHit) {
-					player.acc.y = 10;
+					player.acc.y = 100;
 					player.vel = {0, 0};
 				}
 				if (input->GetKey(SDL_SCANCODE_SPACE) && groundHit) {
-					std::string bstr = std::to_string(boost);
-					screen->Print(&bstr[0], (int)player.pos.x, (int)player.pos.y - 10, 0xffffff);
-
-					boost = (boost < 3) ? (boost + dt * 3) : 3;
+					boost = (boost < 1) ? (boost + dt * 1) : 1;
+					player.vel = {0, 0};
 				}
 
 				// Update velocity and reset boost
 				if (input->GetKeyUp(SDL_SCANCODE_SPACE)) {
-					player.acc = (input->GetMousePos() - player.pos) / 100;
+					player.acc = (input->GetMousePos() - player.pos);
 					player.acc *= boost;
 
 					boost = 0;
@@ -70,7 +68,7 @@ namespace Tmpl8 {
 
 	void Game::Physics(DynamicObject& p, float dt) {
 		// Ground check
-	 	groundHit = (p.pos.y >= ScreenHeight - p.sprite.GetHeight() - 0.5 && p.vel.y <= 0.1) ? true : false;
+	 	groundHit = (p.pos.y >= ScreenHeight - p.sprite.GetHeight() - 1) ? true : false;
 
 		std::cout << "Ground: " << groundHit << std::endl;
 		std::cout << "Pos: " << p.pos.x << ", " << p.pos.y << std::endl;
