@@ -19,6 +19,7 @@ namespace Tmpl8 {
 
 	// On start
 	void Game::Init() {
+		
 	}
 
 	// On close
@@ -39,8 +40,7 @@ namespace Tmpl8 {
 
 				// Update velocity down and reset velocity when groundHit
 				if (input->GetKey(SDL_SCANCODE_SPACE) && !groundHit) {
-					player.acc.y = 100;
-					player.vel = {0, 0};
+					player.vel.y = 100;
 				}
 				if (input->GetKey(SDL_SCANCODE_SPACE) && groundHit) {
 					boost = (boost < 1) ? (boost + dt * 1) : 1;
@@ -48,9 +48,9 @@ namespace Tmpl8 {
 				}
 
 				// Update velocity and reset boost
-				if (input->GetKeyUp(SDL_SCANCODE_SPACE)) {
-					player.acc = (input->GetMousePos() - player.pos);
-					player.acc *= boost;
+				if (input->GetKeyUp(SDL_SCANCODE_SPACE) && groundHit) {
+					player.vel = (input->GetMousePos() - player.pos) / 100;
+					player.vel *= boost;
 
 					boost = 0;
 				}
@@ -66,13 +66,16 @@ namespace Tmpl8 {
 		}
 	}
 
+	/*bool CheckCollision(const Circle& circle, const Rect& rect) {
+		float closestX = std::max(rect.x, std::min(circle.x, rect.x + rect.width));
+		float closestY = std::max(rect.y, std::min(circle.y, rect.y + rect.height));
+		float distance = sqrt(pow(circle.x - closestX, 2) + pow(circle.y - closestY, 2));
+		return distance <= circle.radius;
+	}*/
+
 	void Game::Physics(DynamicObject& p, float dt) {
 		// Ground check
 	 	groundHit = (p.pos.y >= ScreenHeight - p.sprite.GetHeight() - 1) ? true : false;
-
-		std::cout << "Ground: " << groundHit << std::endl;
-		std::cout << "Pos: " << p.pos.x << ", " << p.pos.y << std::endl;
-		std::cout << "Vel: " << p.vel.x << ", " << p.vel.y << std::endl;
 
 		// Apply gravity to the velocity 
 		if (!groundHit) {
@@ -80,14 +83,10 @@ namespace Tmpl8 {
 		}
 
 		// Update the velocity
-		p.vel += p.acc * dt;
 		p.vel *= (float)deceleration;
 
 		// Update position
 		p.pos += p.vel;
-
-		// Reset the acceleration for the next caculation
-		p.acc = {0, 0};
 	}
 
 	void Game::Collision(DynamicObject& p) {
@@ -105,11 +104,11 @@ namespace Tmpl8 {
 		// TODO: Array of all object on screen
 		/*for each (object var in collection_to_loop) {
 		}*/
-		if (p.pos.x < obj.position.x + obj.sprite.GetWidth() &&
-			p.pos.x + p.sprite.GetWidth() > obj.position.x &&
-			p.pos.y < obj.position.y + obj.sprite.GetHeight() &&
-			p.pos.y + p.sprite.GetHeight() > obj.position.y) {
-
+		if (p.pos.x <= obj.position.x + obj.sprite.GetWidth() &&
+			p.pos.x + p.sprite.GetWidth() >= obj.position.x &&
+			p.pos.y <= obj.position.y + obj.sprite.GetHeight() &&
+			p.pos.y + p.sprite.GetHeight() >= obj.position.y) {
+			
 			p.vel.x = -p.vel.x;
 			p.vel.y = -p.vel.y;
 		}
