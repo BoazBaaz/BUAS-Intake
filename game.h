@@ -12,22 +12,21 @@ namespace Tmpl8 {
 	class Input;
 
 	class GameObject {
-		enum class ObjectType { Static, Dynamic };
+		enum class ObjectType { Static, Dynamic }; // I made it a enum so I could add more types later... maybe
 	public:
 		// constructor / destructor
-		GameObject(Sprite* a_Sprite, vec2 a_Position, vec2 a_Velocity, bool a_IsDynamic = false);
-		GameObject(Sprite* a_Sprite, vec2 a_Position);
-		~GameObject();
+		GameObject(Sprite& a_Sprite, vec2 a_Position, vec2 a_Velocity, bool a_IsDynamic = false);
+		GameObject(Sprite& a_Sprite, vec2 a_Position);
+		~GameObject() = default;
 		// member data access
-		Sprite* GetSprite() { return m_Sprite; }
+		Sprite& GetSprite() { return m_Sprite; }
 		vec2& GetPosition() { return m_Position; }
-		void SetPosition(vec2 a_Position) { m_Position = a_Position; }
 		vec2& GetVelocity() { return m_Velocity; }
-		void SetVelocity(vec2 a_Velocity) { m_Velocity = a_Velocity; }
 		// special operations
+		void Update() {}
 	private:
 		// attributes
-		Sprite* m_Sprite;
+		Sprite& m_Sprite;
 		vec2 m_Position;
 		vec2 m_Velocity;
 		ObjectType m_ObjectType;
@@ -50,8 +49,6 @@ namespace Tmpl8 {
 		const double deceleration = 0.995;
 
 		bool Button(GameObject sObj);
-		void Physics(GameObject& p, float dt);
-		void Collision(GameObject& p);
 		void ChangeScene(Scene newScene) { curScene = newScene; screen->Clear(0); };
 	};
 };
