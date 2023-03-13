@@ -23,7 +23,7 @@ namespace Tmpl8 {
 		vec2& GetPosition() { return m_Position; }
 		vec2& GetVelocity() { return m_Velocity; }
 		// special operations
-		void Update() {}
+		void Update(Surface* screen, float& dt, const float& gravity, const float& deceleration, bool& groundHit);
 	private:
 		// attributes
 		Sprite& m_Sprite;
@@ -33,22 +33,21 @@ namespace Tmpl8 {
 	};
 
 	class Game {
+		enum class Scene { Main, Game };
+		Surface* screen;
+		Input* input;
 	public:
+		// special operations
 		void SetTarget(Surface* surface, Input* controls) { screen = surface; input = controls; }
 		void Init();
 		void Shutdown();
-		void Tick(float dt);
-
-	private:
-		Surface* screen;
-		Input* input;
-
-		enum Scene { main, game } curScene = main;
-
-		const double gravity = 9.81;
-		const double deceleration = 0.995;
-
+		void Tick(float& dt);
 		bool Button(GameObject sObj);
-		void ChangeScene(Scene newScene) { curScene = newScene; screen->Clear(0); };
+		void ChangeScene(Scene a_Scene) { m_Scene = a_Scene; screen->Clear(0); };
+	private:
+		// attributes
+		const float m_Gravity = 9.81;
+		const float m_Deceleration = 0.995;
+		Scene m_Scene = Scene::Main;
 	};
 };

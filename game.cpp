@@ -1,7 +1,10 @@
 #include "game.h"
 
 namespace Tmpl8 {
-	//GameObject class constructors
+	////////////////////////
+	//		GAMEOBJECT	  //
+	////////////////////////
+
 	GameObject::GameObject(Sprite& a_Sprite, vec2 a_Position, vec2 a_Velocity, bool a_IsDynamic) :
 		m_Sprite(a_Sprite),
 		m_Position(a_Position),
@@ -15,10 +18,9 @@ namespace Tmpl8 {
 		m_ObjectType(ObjectType::Static) {
 	}
 
-	//GameObject special operations
-	void GameObject::Update() {
+	void GameObject::Update(Surface* screen, float& dt, const float& gravity, const float& deceleration, bool& groundHit) {
 		// Update the position if this is a dynamic GameObject
-		if (m_ObjectType == ObjectType::Dynamic) {
+		if ((bool)m_ObjectType) {
 			// Ground check
 			groundHit = (m_Position.y >= ScreenHeight - m_Sprite.GetHeight() - 1) ? true : false;
 
@@ -28,7 +30,7 @@ namespace Tmpl8 {
 			}
 
 			// Update the velocity
-			m_Velocity *= (float) deceleration;
+			m_Velocity *= (float)deceleration;
 
 			// Update position
 			m_Position += m_Velocity;
@@ -57,16 +59,14 @@ namespace Tmpl8 {
 	Sprite s_Platform(new Surface("assets/balk.png"), 1);
 	GameObject platform(s_Platform, vec2(500, 200));
 
-	GameObject sceneObjects[10];
+	GameObject gameObjects[2] = {player, platform};
 
 	constexpr float maxBoost = 2;
 	float boost = 0;
 	bool groundHit = false;
 
-
 	// On start
 	void Game::Init() {
-		
 	}
 
 	// On close
@@ -74,16 +74,16 @@ namespace Tmpl8 {
 	}
 
 	// Every frame
-	void Game::Tick(float dt) {
+	void Game::Tick(float& dt) {
 		screen->Clear(0);
 
-		switch (curScene) {
-			case main:
+		switch (m_Scene) {
+			case Scene::Main:
 				if (Button(startButton)) {
-					ChangeScene(game);
+					ChangeScene(Scene::Game);
 				}
 				break;
-			case game:
+			case Scene::Game:
 
 				// Update velocity down and reset velocity when groundHit
 				if (input->GetKey(SDL_SCANCODE_SPACE) && !groundHit) {
@@ -101,8 +101,9 @@ namespace Tmpl8 {
 					boost = 0;
 				}
 
-				player.Update();
-				platform.Update();
+				for (GameObject& gameObject : gameObjects) {
+					gameObject.Update(screen, dt, m_Gravity, m_Deceleration, groundHit);
+				}
 				break;
 			default:
 				break;
