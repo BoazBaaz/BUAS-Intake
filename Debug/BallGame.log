@@ -1,13 +1,4 @@
 ﻿  game.cpp
-C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.cpp(22,18): warning C4244: 'initializing': conversion from 'const _Ty' to 'float', possible loss of data
-          with
-          [
-              _Ty=int
-          ]
-C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.cpp(23,18): warning C4244: 'initializing': conversion from 'const _Ty' to 'float', possible loss of data
-          with
-          [
-              _Ty=int
-          ]
-C:\Users\BoasB\Work\BUAS\Intake\BallGame\game.cpp(24,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  template.cpp
+  Generating Code...
   BallGame.vcxproj -> C:\Users\BoasB\Work\BUAS\Intake\BallGame\BallGame_x64_debug.exe

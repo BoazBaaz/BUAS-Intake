@@ -1,18 +1,31 @@
 #include "game.h"
 
 namespace Tmpl8 {
+	GameObject::GameObject(Sprite* a_Sprite, vec2 a_Position, vec2 a_Velocity, bool a_IsDynamic) :
+		m_Sprite(a_Sprite),
+		m_Position(a_Position),
+		m_Velocity(a_Velocity),
+		m_ObjectType((GameObject::ObjectType)a_IsDynamic) {
+	}
+
+	GameObject::GameObject(Sprite* a_Sprite, vec2 a_Position) :
+		m_Sprite(a_Sprite),
+		m_Position(a_Position), 
+		m_ObjectType(ObjectType::Static) {
+	}
+
+	GameObject::~GameObject() {
+		delete m_Sprite;
+	}
 
 	// Variables (Main Scene)
-	Sprite sbSprite(new Surface("assets/start_button.tga"), 2);
-	Game::StaticObject startButton(sbSprite, vec2(300, 412));
+	GameObject startButton(new Sprite(new Surface("assets/start_button.tga"), 2), vec2(300, 412));
 
 	// Variables (Game Scene)
-	Sprite ballSprite(new Surface("assets/ball.png"), 1);
-	Game::DynamicObject player(ballSprite, vec2(375, 462), vec2(4, -20), vec2(0, 0));
+	GameObject player(new Sprite(new Surface("assets/ball.png"), 1), vec2(375, 462), vec2(4, -20), true);
+	GameObject platform(new Sprite(new Surface("assets/balk.png"), 1), vec2(500, 200));
 
-	Sprite objSprite(new Surface("assets/balk.png"), 1);
-	Game::StaticObject obj(objSprite, vec2(500, 200));
-
+	constexpr float maxBoost = 2;
 	float boost = 0;
 	bool groundHit = false;
 
@@ -40,17 +53,17 @@ namespace Tmpl8 {
 
 				// Update velocity down and reset velocity when groundHit
 				if (input->GetKey(SDL_SCANCODE_SPACE) && !groundHit) {
-					player.vel.y = 100;
+					player.GetVelocity().y = 100;
 				}
 				if (input->GetKey(SDL_SCANCODE_SPACE) && groundHit) {
-					boost = (boost < 1) ? (boost + dt * 1) : 1;
-					player.vel = {0, 0};
+					boost = (boost < maxBoost) ? (boost += dt) : maxBoost;
+					player.GetVelocity() = {0, 0};
 				}
 
 				// Update velocity and reset boost
 				if (input->GetKeyUp(SDL_SCANCODE_SPACE) && groundHit) {
-					player.vel = (input->GetMousePos() - player.pos) / 100;
-					player.vel *= boost;
+					player.GetVelocity() = (input->GetMousePos() - player.GetPosition()) / 100;
+					player.GetVelocity() *= boost;
 
 					boost = 0;
 				}
@@ -58,8 +71,8 @@ namespace Tmpl8 {
 				Physics(player, dt);
 				Collision(player);
 
-				player.sprite.Draw(screen, (int)player.pos.x, (int)player.pos.y);
-				obj.sprite.Draw(screen, (int)obj.position.x, (int)obj.position.y);
+				player.GetSprite()->Draw(screen, (int) player.GetPosition().x, (int) player.GetPosition().y);
+				platform.GetSprite()->Draw(screen, (int)platform.GetPosition().x, (int)platform.GetPosition().y);
 				break;
 			default:
 				break;
@@ -73,55 +86,55 @@ namespace Tmpl8 {
 		return distance <= circle.radius;
 	}*/
 
-	void Game::Physics(DynamicObject& p, float dt) {
+	void Game::Physics(GameObject& p, float dt) {
 		// Ground check
-	 	groundHit = (p.pos.y >= ScreenHeight - p.sprite.GetHeight() - 1) ? true : false;
+	 	groundHit = (p.GetPosition().y >= ScreenHeight - p.GetSprite()->GetHeight() - 1) ? true : false;
 
 		// Apply gravity to the velocity 
 		if (!groundHit) {
-			p.vel.y += (float)gravity * dt;
+			p.GetVelocity().y += (float)gravity * dt;
 		}
 
 		// Update the velocity
-		p.vel *= (float)deceleration;
+		p.GetVelocity() *= (float)deceleration;
 
 		// Update position
-		p.pos += p.vel;
+		p.GetPosition() += p.GetVelocity();
 	}
 
-	void Game::Collision(DynamicObject& p) {
+	void Game::Collision(GameObject& p) {
 		// Screen boundry collision
-		if (p.pos.x < 0 || p.pos.x + p.sprite.GetWidth() > ScreenWidth) {
-			p.pos.x = std::max((float) 0, std::min(p.pos.x, (float) ScreenWidth - p.sprite.GetWidth()));
-			p.vel.x = -p.vel.x;
+		if (p.GetPosition().x < 0 || p.GetPosition().x + p.GetSprite()->GetWidth() > ScreenWidth) {
+			p.GetPosition().x = std::max((float) 0, std::min(p.GetPosition().x, (float) ScreenWidth - p.GetSprite()->GetWidth()));
+			p.GetVelocity().x = -p.GetVelocity().x;
 		}
-		if (p.pos.y < 0 || p.pos.y + p.sprite.GetHeight() > ScreenHeight) {
-			p.pos.y = std::max((float) 0, std::min(p.pos.y, (float) ScreenHeight - p.sprite.GetHeight()));
-			p.vel.y = -p.vel.y;
+		if (p.GetPosition().y < 0 || p.GetPosition().y + p.GetSprite()->GetHeight() > ScreenHeight) {
+			p.GetPosition().y = std::max((float) 0, std::min(p.GetPosition().y, (float) ScreenHeight - p.GetSprite()->GetHeight()));
+			p.GetVelocity().y = -p.GetVelocity().y;
 		}
 
 		// Object collision
 		// TODO: Array of all object on screen
 		/*for each (object var in collection_to_loop) {
 		}*/
-		if (p.pos.x <= obj.position.x + obj.sprite.GetWidth() &&
-			p.pos.x + p.sprite.GetWidth() >= obj.position.x &&
-			p.pos.y <= obj.position.y + obj.sprite.GetHeight() &&
-			p.pos.y + p.sprite.GetHeight() >= obj.position.y) {
+		if (p.GetPosition().x <= platform.GetPosition().x + platform.GetSprite()->GetWidth() &&
+			p.GetPosition().x + p.GetSprite()->GetWidth() >= platform.GetPosition().x &&
+			p.GetPosition().y <= platform.GetPosition().y + platform.GetSprite()->GetHeight() &&
+			p.GetPosition().y + p.GetSprite()->GetHeight() >= platform.GetPosition().y) {
 			
-			p.vel.x = -p.vel.x;
-			p.vel.y = -p.vel.y;
+			p.GetVelocity().x = -p.GetVelocity().x;
+			p.GetVelocity().y = -p.GetVelocity().y;
 		}
 	}
 
-	bool Game::Button(StaticObject sObj) {
-		sObj.sprite.SetFrame(0);
-		sObj.sprite.Draw(screen, (int)sObj.position.x, (int) sObj.position.y);
-		if (input->GetMousePos().x >= (int) sObj.position.x && input->GetMousePos().x <= (int) sObj.position.x + sObj.sprite.GetWidth()) {
-			if (input->GetMousePos().y >= (int) sObj.position.y && input->GetMousePos().y <= (int) sObj.position.y + sObj.sprite.GetHeight()) {
+	bool Game::Button(GameObject sObj) {
+		sObj.GetSprite()->SetFrame(0);
+		sObj.GetSprite()->Draw(screen, (int)sObj.GetPosition().x, (int) sObj.GetPosition().y);
+		if (input->GetMousePos().x >= (int) sObj.GetPosition().x && input->GetMousePos().x <= (int) sObj.GetPosition().x + sObj.GetSprite()->GetWidth()) {
+			if (input->GetMousePos().y >= (int) sObj.GetPosition().y && input->GetMousePos().y <= (int) sObj.GetPosition().y + sObj.GetSprite()->GetHeight()) {
 				if (input->GetMouseButton(1)) {
-					sObj.sprite.SetFrame(1);
-					sObj.sprite.Draw(screen, (int) sObj.position.x, (int) sObj.position.y);
+					sObj.GetSprite()->SetFrame(1);
+					sObj.GetSprite()->Draw(screen, (int) sObj.GetPosition().x, (int) sObj.GetPosition().y);
 				}
 				if (input->GetMouseButtonUp(1)) {
 					return true;
