@@ -9,7 +9,7 @@ namespace Tmpl8 {
 		m_Sprite(a_Sprite),
 		m_Position(a_Position),
 		m_Velocity(a_Velocity),
-		m_ObjectType((GameObject::ObjectType)a_IsDynamic) {
+		m_ObjectType(a_IsDynamic ? ObjectType::Dynamic : ObjectType::Static) {
 	}
 
 	GameObject::GameObject(Sprite& a_Sprite, vec2 a_Position) :
@@ -23,6 +23,32 @@ namespace Tmpl8 {
 	void GameObject::Update(Surface* screen, float& dt, const float& gravity, const float& deceleration) {
 		// Update the position if this is a dynamic GameObject
 		if (m_ObjectType == ObjectType::Dynamic) {
+			// Update the velocity
+			m_Velocity *= deceleration;
+
+			// Update position
+			m_Position += (m_Velocity * m_Speed) * dt;
+		}
+
+		// TODO: Draw object relative to the player
+		// Only draw the object if it is on the screen
+		if (m_Position.x < ScreenWidth && m_Position.x + m_Sprite.GetWidth() > 0 &&
+			m_Position.y < ScreenHeight && m_Position.y + m_Sprite.GetHeight() > 0) {
+			m_Sprite.Draw(screen, (int)m_Position.x, (int)m_Position.y);
+		}
+	}
+
+	//////////////////////
+	//		PLAYER		//
+	//////////////////////
+
+	Player::Player(Sprite& a_Sprite, vec2 a_Position, vec2 a_Velocity, float a_PlayerSpeed) :
+		GameObject(a_Sprite, a_Position, a_Velocity, true) {
+		SetSpeed(a_PlayerSpeed);
+	}
+
+	void Player::Update(Surface* screen, float& dt, const float& gravity, const float& deceleration) {
+		if (m_ObjectType == ObjectType::Dynamic) {
 			// Ground check
 			m_GroundHit = (m_Position.y >= ScreenHeight - m_Sprite.GetHeight() - 1) ? true : false;
 
@@ -35,20 +61,22 @@ namespace Tmpl8 {
 			m_Velocity *= deceleration;
 
 			// Update position
-			m_Position += (m_Velocity * 10) * dt;
+			m_Position += (m_Velocity * m_Speed) * dt;
 		}
 
 		// TODO: Collision check
 		if (m_Position.y + m_Sprite.GetHeight() > ScreenHeight) {
-			m_Position.y = ScreenHeight - m_Sprite.GetHeight();
+			m_Position.y = (float) ScreenHeight - m_Sprite.GetHeight();
 			m_Velocity.y = -m_Velocity.y;
 		}
 
+		// TODO: Alway have the player x position be the center of the screen
 		// Only draw the object if it is on the screen
 		if (m_Position.x < ScreenWidth && m_Position.x + m_Sprite.GetWidth() > 0 &&
 			m_Position.y < ScreenHeight && m_Position.y + m_Sprite.GetHeight() > 0) {
-			m_Sprite.Draw(screen, (int)m_Position.x, (int)m_Position.y);
+			m_Sprite.Draw(screen, (int) m_Position.x, (int) m_Position.y);
 		}
+		
 	}
 
 	////////////////////
@@ -61,7 +89,7 @@ namespace Tmpl8 {
 
 	// Variables (Game Scene)
 	Sprite s_Player(new Surface("assets/ball.png"), 1);
-	GameObject player(s_Player, vec2(375, 462), vec2(4, -20), true);
+	Player player(s_Player, vec2(375, 462), vec2(4, -20), 50);
 	Sprite s_Platform(new Surface("assets/balk.png"), 1);
 	GameObject platform(s_Platform, vec2(500, 200));
 

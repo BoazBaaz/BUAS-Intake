@@ -1,3 +1,2 @@
 ﻿  game.cpp
-C:\Users\BoasB\Work\BUAS\BUAS-Intake\game.cpp(43,32): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-  BallGame.vcxproj -> C:\Users\BoasB\Work\BUAS\BUAS-Intake\BallGame_x64_debug.exe
+  BallGame.vcxproj -> C:\Users\BoasB\Work\BUAS\Intake\BallGame\BallGame_x64_debug.exe
