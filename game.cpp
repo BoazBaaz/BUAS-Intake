@@ -18,25 +18,31 @@ namespace Tmpl8 {
 		m_ObjectType(ObjectType::Static) {
 	}
 
-	void GameObject::Update(Surface* screen, float& dt, const float& gravity, const float& deceleration, bool& groundHit) {
+	//TODO: Remove the groundHit
+	//TODO: Add speed variable
+	void GameObject::Update(Surface* screen, float& dt, const float& gravity, const float& deceleration) {
 		// Update the position if this is a dynamic GameObject
-		if ((bool)m_ObjectType) {
+		if (m_ObjectType == ObjectType::Dynamic) {
 			// Ground check
-			groundHit = (m_Position.y >= ScreenHeight - m_Sprite.GetHeight() - 1) ? true : false;
+			m_GroundHit = (m_Position.y >= ScreenHeight - m_Sprite.GetHeight() - 1) ? true : false;
 
 			// Apply gravity to the velocity 
-			if (!groundHit) {
-				m_Velocity.y += (float) gravity * dt;
+			if (!m_GroundHit) {
+				m_Velocity.y += gravity * dt;
 			}
 
 			// Update the velocity
-			m_Velocity *= (float)deceleration;
+			m_Velocity *= deceleration;
 
 			// Update position
-			m_Position += m_Velocity;
+			m_Position += (m_Velocity * 10) * dt;
 		}
 
-		// Collision check
+		// TODO: Collision check
+		if (m_Position.y + m_Sprite.GetHeight() > ScreenHeight) {
+			m_Position.y = ScreenHeight - m_Sprite.GetHeight();
+			m_Velocity.y = -m_Velocity.y;
+		}
 
 		// Only draw the object if it is on the screen
 		if (m_Position.x < ScreenWidth && m_Position.x + m_Sprite.GetWidth() > 0 &&
@@ -85,6 +91,7 @@ namespace Tmpl8 {
 				break;
 			case Scene::Game:
 
+				//TODO: make the groundHit only check the player GameObject
 				// Update velocity down and reset velocity when groundHit
 				if (input->GetKey(SDL_SCANCODE_SPACE) && !groundHit) {
 					player.GetVelocity().y = 100;
@@ -102,7 +109,7 @@ namespace Tmpl8 {
 				}
 
 				for (GameObject& gameObject : gameObjects) {
-					gameObject.Update(screen, dt, m_Gravity, m_Deceleration, groundHit);
+					gameObject.Update(screen, dt, m_Gravity, m_Deceleration);
 				}
 				break;
 			default:

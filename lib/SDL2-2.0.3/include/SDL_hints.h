@@ -285,7 +285,7 @@ extern "C" {
 
 
 /**
- *  \brief If set to 0 then never set the top most bit on a SDL Window, even if the video mode expects it.
+ *  \brief If set to 0 then never set the up most bit on a SDL Window, even if the video mode expects it.
  *      This is a debugging aid for developers and not expected to be used by end users. The default is "1"
  *
  *  This variable can be set to the following values:

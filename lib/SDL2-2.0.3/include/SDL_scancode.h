@@ -127,7 +127,7 @@ typedef enum
                                   */
     SDL_SCANCODE_SEMICOLON = 51,
     SDL_SCANCODE_APOSTROPHE = 52,
-    SDL_SCANCODE_GRAVE = 53, /**< Located in the top left corner (on both ANSI
+    SDL_SCANCODE_GRAVE = 53, /**< Located in the up left corner (on both ANSI
                               *   and ISO keyboards). Produces GRAVE ACCENT and
                               *   TILDE in a US Windows layout and in US and UK
                               *   Mac layouts on ANSI keyboards, GRAVE ACCENT

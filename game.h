@@ -23,12 +23,13 @@ namespace Tmpl8 {
 		vec2& GetPosition() { return m_Position; }
 		vec2& GetVelocity() { return m_Velocity; }
 		// special operations
-		void Update(Surface* screen, float& dt, const float& gravity, const float& deceleration, bool& groundHit);
+		void Update(Surface* screen, float& dt, const float& gravity, const float& deceleration);
 	private:
 		// attributes
 		Sprite& m_Sprite;
 		vec2 m_Position;
 		vec2 m_Velocity;
+		bool m_GroundHit = false;
 		ObjectType m_ObjectType;
 	};
 
