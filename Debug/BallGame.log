@@ -1,2 +1,15 @@
 ﻿  game.cpp
-  BallGame.vcxproj -> C:\Users\BoasB\Work\BUAS\Intake\BallGame\BallGame_x64_debug.exe
+C:\Users\BoasB\Work\BUAS\BUAS-Intake\game.h(27,15): error C2061: syntax error: identifier 'GameObject'
+C:\Users\BoasB\Work\BUAS\BUAS-Intake\game.cpp(40,9): error C2660: 'Tmpl8::Game::Button': function does not take 1 arguments
+C:\Users\BoasB\Work\BUAS\BUAS-Intake\game.h(27,8): message : see declaration of 'Tmpl8::Game::Button'
+C:\Users\BoasB\Work\BUAS\BUAS-Intake\game.cpp(40,9): message : while trying to match the argument list '(Tmpl8::GameObject)'
+C:\Users\BoasB\Work\BUAS\BUAS-Intake\game.cpp(81,13): error C2511: 'bool Tmpl8::Game::Button(Tmpl8::GameObject)': overloaded member function not found in 'Tmpl8::Game'
+C:\Users\BoasB\Work\BUAS\BUAS-Intake\game.h(14,8): message : see declaration of 'Tmpl8::Game'
+C:\Users\BoasB\Work\BUAS\BUAS-Intake\game.cpp(83,25): error C2597: illegal reference to non-static member 'Tmpl8::Game::screen'
+C:\Users\BoasB\Work\BUAS\BUAS-Intake\game.h(16,12): message : see declaration of 'Tmpl8::Game::screen'
+C:\Users\BoasB\Work\BUAS\BUAS-Intake\game.cpp(88,28): error C2597: illegal reference to non-static member 'Tmpl8::Game::screen'
+C:\Users\BoasB\Work\BUAS\BUAS-Intake\game.h(16,12): message : see declaration of 'Tmpl8::Game::screen'
+  gameobject.cpp
+  template.cpp
+C:\Users\BoasB\Work\BUAS\BUAS-Intake\game.h(27,15): error C2061: syntax error: identifier 'GameObject'
+  Generating Code...

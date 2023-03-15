@@ -1,84 +1,6 @@
 #include "game.h"
 
 namespace Tmpl8 {
-	////////////////////////
-	//		GAMEOBJECT	  //
-	////////////////////////
-
-	GameObject::GameObject(Sprite& a_Sprite, vec2 a_Position, vec2 a_Velocity, bool a_IsDynamic) :
-		m_Sprite(a_Sprite),
-		m_Position(a_Position),
-		m_Velocity(a_Velocity),
-		m_ObjectType(a_IsDynamic ? ObjectType::Dynamic : ObjectType::Static) {
-	}
-
-	GameObject::GameObject(Sprite& a_Sprite, vec2 a_Position) :
-		m_Sprite(a_Sprite),
-		m_Position(a_Position), 
-		m_ObjectType(ObjectType::Static) {
-	}
-
-	//TODO: Remove the groundHit
-	//TODO: Add speed variable
-	void GameObject::Update(Surface* screen, float& dt, const float& gravity, const float& deceleration) {
-		// Update the position if this is a dynamic GameObject
-		if (m_ObjectType == ObjectType::Dynamic) {
-			// Update the velocity
-			m_Velocity *= deceleration;
-
-			// Update position
-			m_Position += (m_Velocity * m_Speed) * dt;
-		}
-
-		// TODO: Draw object relative to the player
-		// Only draw the object if it is on the screen
-		if (m_Position.x < ScreenWidth && m_Position.x + m_Sprite.GetWidth() > 0 &&
-			m_Position.y < ScreenHeight && m_Position.y + m_Sprite.GetHeight() > 0) {
-			m_Sprite.Draw(screen, (int)m_Position.x, (int)m_Position.y);
-		}
-	}
-
-	//////////////////////
-	//		PLAYER		//
-	//////////////////////
-
-	Player::Player(Sprite& a_Sprite, vec2 a_Position, vec2 a_Velocity, float a_PlayerSpeed) :
-		GameObject(a_Sprite, a_Position, a_Velocity, true) {
-		SetSpeed(a_PlayerSpeed);
-	}
-
-	void Player::Update(Surface* screen, float& dt, const float& gravity, const float& deceleration) {
-		if (m_ObjectType == ObjectType::Dynamic) {
-			// Ground check
-			m_GroundHit = (m_Position.y >= ScreenHeight - m_Sprite.GetHeight() - 1) ? true : false;
-
-			// Apply gravity to the velocity 
-			if (!m_GroundHit) {
-				m_Velocity.y += gravity * dt;
-			}
-
-			// Update the velocity
-			m_Velocity *= deceleration;
-
-			// Update position
-			m_Position += (m_Velocity * m_Speed) * dt;
-		}
-
-		// TODO: Collision check
-		if (m_Position.y + m_Sprite.GetHeight() > ScreenHeight) {
-			m_Position.y = (float) ScreenHeight - m_Sprite.GetHeight();
-			m_Velocity.y = -m_Velocity.y;
-		}
-
-		// TODO: Alway have the player x position be the center of the screen
-		// Only draw the object if it is on the screen
-		if (m_Position.x < ScreenWidth && m_Position.x + m_Sprite.GetWidth() > 0 &&
-			m_Position.y < ScreenHeight && m_Position.y + m_Sprite.GetHeight() > 0) {
-			m_Sprite.Draw(screen, (int) m_Position.x, (int) m_Position.y);
-		}
-		
-	}
-
 	////////////////////
 	//		GAME	  //
 	////////////////////
@@ -89,11 +11,13 @@ namespace Tmpl8 {
 
 	// Variables (Game Scene)
 	Sprite s_Player(new Surface("assets/ball.png"), 1);
-	Player player(s_Player, vec2(375, 462), vec2(4, -20), 50);
-	Sprite s_Platform(new Surface("assets/balk.png"), 1);
-	GameObject platform(s_Platform, vec2(500, 200));
+	Player player(s_Player, vec2(375, 462), vec2(4, -20), 10);
+	Sprite s_Platform0(new Surface("assets/balk.png"), 1);
+	GameObject platform0(s_Platform0, vec2(500, 200));
+	Sprite s_Platform1(new Surface("assets/balk.png"), 1);
+	GameObject platform1(s_Platform1, vec2(100, 200));
 
-	GameObject gameObjects[2] = {player, platform};
+	GameObject gameObjects[2] = {platform0, platform1};
 
 	constexpr float maxBoost = 2;
 	float boost = 0;
@@ -118,26 +42,11 @@ namespace Tmpl8 {
 				}
 				break;
 			case Scene::Game:
+				
 
-				//TODO: make the groundHit only check the player GameObject
-				// Update velocity down and reset velocity when groundHit
-				if (input->GetKey(SDL_SCANCODE_SPACE) && !groundHit) {
-					player.GetVelocity().y = 100;
-				} else if (input->GetKey(SDL_SCANCODE_SPACE) && groundHit) {
-					boost = (boost < maxBoost) ? (boost += dt) : maxBoost;
-					player.GetVelocity() = {0, 0};
-				}
-
-				// Update velocity and reset boost
-				if (input->GetKeyUp(SDL_SCANCODE_SPACE) && groundHit) {
-					player.GetVelocity() = (input->GetMousePos() - player.GetPosition()) / 100;
-					player.GetVelocity() *= boost;
-
-					boost = 0;
-				}
-
+				player.Update(this, screen, input, dt);
 				for (GameObject& gameObject : gameObjects) {
-					gameObject.Update(screen, dt, m_Gravity, m_Deceleration);
+					gameObject.Update(this, screen, dt);
 				}
 				break;
 			default:
@@ -157,7 +66,6 @@ namespace Tmpl8 {
 	//	}
 
 	//	// Object collision
-	//	// TODO: Array of all object on screen
 	//	/*for each (object var in collection_to_loop) {
 	//	}*/
 	//	if (p.GetPosition().x <= platform.GetPosition().x + platform.GetSprite().GetWidth() &&
