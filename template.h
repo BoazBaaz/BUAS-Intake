@@ -9,6 +9,7 @@
 
 #include <cstdlib>
 #include <cstdio>
+#include <chrono>
 
 constexpr int ScreenWidth = 800;
 constexpr int ScreenHeight = 512;
@@ -61,16 +62,16 @@ namespace Tmpl8 {
 #define unlikely(expr) __builtin_expect((expr),false)
 #endif
 
-	struct timer {
-		typedef long long value_type;
-		static double inv_freq;
-		value_type start;
+	class timer {
+		typedef std::chrono::time_point<std::chrono::high_resolution_clock> time_value;
+	public:
+		// constructor / destructor
 		timer();
-		float elapsed() const;
-		static value_type get();
-		static double to_time(const value_type vt);
-		void reset();
-		static void init();
+		// special operations
+		float delta_time();
+	private:
+		// attributes
+		time_value last_time;
 	};
 
 	// vectors

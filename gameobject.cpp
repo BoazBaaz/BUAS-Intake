@@ -41,19 +41,17 @@ namespace Tmpl8 {
 	void Player::Update(Game* game, Surface* screen, Input* input, float& dt) {
 		// Update velocity down and reset velocity when groundHit
 		if (input->GetKey(SDL_SCANCODE_SPACE) && !m_GroundCollision) {
-			player.GetVelocity().y = 100;
+			m_Velocity.y = m_BoostDropForce;
 		}
 		else if (input->GetKey(SDL_SCANCODE_SPACE) && m_GroundCollision) {
-			boost = (boost < maxBoost) ? (boost += dt) : maxBoost;
-			player.GetVelocity() = { 0, 0 };
+			m_Boost = (m_Boost < m_MaxBoost) ? (m_Boost += (m_BoostBuildup * dt)) : m_MaxBoost;
+			m_Velocity = { 0, 0 };
 		}
 
 		// Update velocity and reset boost
 		if (input->GetKeyUp(SDL_SCANCODE_SPACE) && m_GroundCollision) {
-			player.GetVelocity() = (input->GetMousePos() - player.GetPosition()) / 100;
-			player.GetVelocity() *= boost;
-
-			boost = 0;
+			m_Velocity = (input->GetMousePos() - m_Position).normalized() * (m_Boost * m_BoostPower);
+			m_Boost = 0;
 		}
 
 		// Update the position of the player
@@ -74,6 +72,7 @@ namespace Tmpl8 {
 		}
 
 		// TODO: Collision check
+		// TODO: Only bounce the player when they did not use the psace key to go down
 		if (m_Position.y + m_Sprite.GetHeight() > ScreenHeight) {
 			m_Position.y = (float)ScreenHeight - m_Sprite.GetHeight();
 			m_Velocity.y = -m_Velocity.y;

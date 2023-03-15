@@ -1,8 +1,6 @@
 #pragma once
 
-#include "surface.h"
-#include "template.h"
-#include <iostream>
+#include "game.h"
 
 namespace Tmpl8 {
 	class Input {
@@ -37,7 +35,7 @@ namespace Tmpl8 {
 		struct Mouse {
 			InputState buttons[m_MaxButtons] = {};
 			vec2 position;
-			int pixel;
+			int pixel = 0;
 		} m_Mouse;
 	};
 }

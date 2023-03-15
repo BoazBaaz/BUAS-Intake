@@ -1,10 +1,6 @@
 #include "game.h"
 
 namespace Tmpl8 {
-	////////////////////
-	//		GAME	  //
-	////////////////////
-
 	// Variables (Main Scene)
 	Sprite s_StartButton(new Surface("assets/start_button.tga"), 2);
 	GameObject startButton(s_StartButton, vec2(300, 412));
@@ -12,16 +8,13 @@ namespace Tmpl8 {
 	// Variables (Game Scene)
 	Sprite s_Player(new Surface("assets/ball.png"), 1);
 	Player player(s_Player, vec2(375, 462), vec2(4, -20), 10);
+
 	Sprite s_Platform0(new Surface("assets/balk.png"), 1);
 	GameObject platform0(s_Platform0, vec2(500, 200));
 	Sprite s_Platform1(new Surface("assets/balk.png"), 1);
 	GameObject platform1(s_Platform1, vec2(100, 200));
 
 	GameObject gameObjects[2] = {platform0, platform1};
-
-	constexpr float maxBoost = 2;
-	float boost = 0;
-	bool groundHit = false;
 
 	// On start
 	void Game::Init() {
@@ -43,7 +36,6 @@ namespace Tmpl8 {
 				break;
 			case Scene::Game:
 				
-
 				player.Update(this, screen, input, dt);
 				for (GameObject& gameObject : gameObjects) {
 					gameObject.Update(this, screen, dt);

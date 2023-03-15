@@ -1,13 +1,14 @@
 #pragma once
 
-#include "surface.h"
-#include "template.h"
-#include <iostream>
+#include "game.h"
 
 namespace Tmpl8 {
+	class Game;
+	class Input;
+
 	class GameObject {
 	protected:
-		enum class ObjectType { Static, Dynamic }; // I made it a enum so I could add more types later... maybe
+		enum class ObjectType { Static, Dynamic, UI }; 
 	public:
 		// constructor / destructor
 		GameObject(Sprite& a_Sprite, vec2 a_Position, vec2 a_Velocity, bool a_IsDynamic = false);
@@ -34,11 +35,16 @@ namespace Tmpl8 {
 		// constructor / destructor
 		Player(Sprite& a_Sprite, vec2 a_Position, vec2 a_Velocity, float a_PlayerSpeed);
 		// member data access
-		bool& GetGroundCollision() { return m_GroundCollision; }
+		bool GetGroundCollision() { return m_GroundCollision; }
 		// special operations
 		void Update(Game* game, Surface* screen, Input* input, float& dt);
 	private:
 		// attributes
+		const float m_MaxBoost = 1;
+		float m_Boost = 0;
+		float m_BoostPower = 30;
+		float m_BoostBuildup = 1.4;
+		float m_BoostDropForce = 200;
 		bool m_GroundCollision = false;
 	};
 }

@@ -39,34 +39,15 @@ extern "C"
 
 namespace Tmpl8 {
 
-	double timer::inv_freq = 1;
 
-	timer::timer() : start(get()) {
-		init();
+	timer::timer() : last_time(std::chrono::high_resolution_clock::now()) {
 	}
 
-	float timer::elapsed() const {
-		return (float)( ( get() - start ) * inv_freq );
-	}
-
-	timer::value_type timer::get() {
-		LARGE_INTEGER c;
-		QueryPerformanceCounter(&c);
-		return c.QuadPart;
-	}
-
-	double timer::to_time(const value_type vt) {
-		return double(vt) * inv_freq;
-	}
-
-	void timer::reset() {
-		start = get();
-	}
-
-	void timer::init() {
-		LARGE_INTEGER f;
-		QueryPerformanceFrequency(&f);
-		inv_freq = 1000. / double(f.QuadPart);
+	float timer::delta_time() {
+		time_value current_time = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<float> duration = current_time - last_time;
+		last_time = current_time;
+		return duration.count();
 	}
 
 	// Math Stuff
@@ -312,8 +293,7 @@ int main(int argc, char** argv) {
 	int exitapp = 0;
 	game = new Game();
 	game->SetTarget(surface, controls);
-	timer t;
-	t.reset();
+	timer time;
 	while (!exitapp) {
 #ifdef ADVANCEDGL
 		swap();
@@ -341,10 +321,8 @@ int main(int argc, char** argv) {
 			firstframe = false;
 		}
 		// calculate frame time and pass it to game->Tick
-		float elapsedTime = t.elapsed();
-		t.reset();
-
-		elapsedTime /= 1000; // better deltaTime value
+		float elapsedTime = time.delta_time();
+		elapsedTime *= 5;
 
 		game->Tick(elapsedTime);
 		controls->UpdateInputState();

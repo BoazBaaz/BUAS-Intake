@@ -3,6 +3,7 @@
 #include "surface.h"
 #include "template.h"
 #include "input.h"
+#include "gameobject.h"
 #include "SDL_Scancode.h"
 #include <iostream>
 #include <string>
@@ -10,6 +11,8 @@
 namespace Tmpl8 {
 	class Surface;
 	class Input;
+	class GameObject;
+	class Player;
 
 	class Game {
 		enum class Scene { Main, Game };
@@ -18,7 +21,7 @@ namespace Tmpl8 {
 	public:
 		// member data access
 		const float& GetGravity() { return m_Gravity; }
-		const float& GetDeceleration() { return m_Deceleration; }
+		const float& GetDeceleration() { return m_Gravity; }
 		// special operations
 		void SetTarget(Surface* surface, Input* controls) { screen = surface; input = controls; }
 		void Init();
