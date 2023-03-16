@@ -21,12 +21,12 @@ namespace Tmpl8 {
 	public:
 		// member data access
 		const float& GetGravity() { return m_Gravity; }
-		const float& GetDeceleration() { return m_Gravity; }
+		const float& GetDeceleration() { return m_Deceleration; }
 		// special operations
 		void SetTarget(Surface* surface, Input* controls) { screen = surface; input = controls; }
 		void Init();
 		void Shutdown();
-		void Tick(float& dt);
+		void Tick(float dt);
 		bool Button(GameObject sObj);
 		void ChangeScene(Scene a_Scene) { m_Scene = a_Scene; screen->Clear(0); };
 	private:

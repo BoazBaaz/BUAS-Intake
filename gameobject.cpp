@@ -20,7 +20,6 @@ namespace Tmpl8 {
 		if (m_ObjectType == ObjectType::Dynamic) {
 			// Update the velocity
 			m_Velocity *= game->GetDeceleration();
-
 			// Update position
 			m_Position += (m_Velocity * m_Speed) * dt;
 		}
@@ -42,8 +41,7 @@ namespace Tmpl8 {
 		// Update velocity down and reset velocity when groundHit
 		if (input->GetKey(SDL_SCANCODE_SPACE) && !m_GroundCollision) {
 			m_Velocity.y = m_BoostDropForce;
-		}
-		else if (input->GetKey(SDL_SCANCODE_SPACE) && m_GroundCollision) {
+		} else if (input->GetKey(SDL_SCANCODE_SPACE) && m_GroundCollision) {
 			m_Boost = (m_Boost < m_MaxBoost) ? (m_Boost += (m_BoostBuildup * dt)) : m_MaxBoost;
 			m_Velocity = { 0, 0 };
 		}
@@ -57,7 +55,7 @@ namespace Tmpl8 {
 		// Update the position of the player
 		if (m_ObjectType == ObjectType::Dynamic) {
 			// Ground check
-			m_GroundCollision = (m_Position.y >= ScreenHeight - m_Sprite.GetHeight() - 1) ? true : false;
+			m_GroundCollision = (m_Position.y + m_Sprite.GetHeight() >= ScreenHeight) ? true : false;
 
 			// Apply gravity to the velocity 
 			if (!m_GroundCollision) {
@@ -69,6 +67,8 @@ namespace Tmpl8 {
 
 			// Update position
 			m_Position += (m_Velocity * m_Speed) * dt;
+			std::cout << "Pos: " << m_Position.x << ", " << m_Position.y << std::endl;
+			std::cout << "Vel: " << m_Velocity.x << ", " << m_Velocity.y << std::endl;
 		}
 
 		// TODO: Collision check

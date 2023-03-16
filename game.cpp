@@ -7,7 +7,7 @@ namespace Tmpl8 {
 
 	// Variables (Game Scene)
 	Sprite s_Player(new Surface("assets/ball.png"), 1);
-	Player player(s_Player, vec2(375, 462), vec2(4, -20), 10);
+	Player player(s_Player, vec2(375, 462), vec2(4, -20), 20);
 
 	Sprite s_Platform0(new Surface("assets/balk.png"), 1);
 	GameObject platform0(s_Platform0, vec2(500, 200));
@@ -25,7 +25,7 @@ namespace Tmpl8 {
 	}
 
 	// Every frame
-	void Game::Tick(float& dt) {
+	void Game::Tick(float dt) {
 		screen->Clear(0);
 
 		switch (m_Scene) {

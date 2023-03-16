@@ -38,8 +38,6 @@ extern "C"
 #endif
 
 namespace Tmpl8 {
-
-
 	timer::timer() : last_time(std::chrono::high_resolution_clock::now()) {
 	}
 
@@ -320,11 +318,9 @@ int main(int argc, char** argv) {
 			game->Init();
 			firstframe = false;
 		}
-		// calculate frame time and pass it to game->Tick
-		float elapsedTime = time.delta_time();
-		elapsedTime *= 5;
 
-		game->Tick(elapsedTime);
+		// calculate frame time and pass it to game->Tick
+		game->Tick(time.delta_time());
 		controls->UpdateInputState();
 
 		// event loop
