@@ -9,9 +9,10 @@ namespace Tmpl8 {
 	class GameObject {
 	protected:
 		enum class ObjectType { Static, Dynamic, UI }; 
+		enum class Shape { Rectangle, Circle };
 	public:
 		// constructor / destructor
-		GameObject(Sprite& a_Sprite, vec2 a_Position, vec2 a_Velocity, bool a_IsDynamic = false);
+		GameObject(Sprite& a_Sprite, vec2 a_Position, vec2 a_Velocity, bool a_IsRectangle = true, bool a_IsDynamic = false);
 		GameObject(Sprite& a_Sprite, vec2 a_Position);
 		~GameObject() = default;
 		// member data access
@@ -19,15 +20,20 @@ namespace Tmpl8 {
 		vec2& GetPosition() { return m_Position; }
 		vec2& GetVelocity() { return m_Velocity; }
 		void SetSpeed(float a_Speed) { m_Speed = a_Speed; }
+		Shape GetShape() { m_Shape; }
 		// special operations
 		virtual void Update(Game* game, Surface* screen, float& dt);
 	protected:
+		// special operations
+		void Physics(Game* game, float& dt);
 		// attributes
 		Sprite& m_Sprite;
 		vec2 m_Position;
+		vec2 m_CenterPosition;
 		vec2 m_Velocity;
 		float m_Speed = 1;
-		ObjectType m_ObjectType;
+		const Shape m_Shape;
+		const ObjectType m_ObjectType;
 	};
 
 	class Player : public GameObject {
@@ -39,6 +45,8 @@ namespace Tmpl8 {
 		// special operations
 		void Update(Game* game, Surface* screen, Input* input, float& dt);
 	private:
+		// special operations
+		void CollisionCheck(GameObject& obj);
 		// attributes
 		const float m_MaxBoost = 1;
 		float m_Boost = 0;
