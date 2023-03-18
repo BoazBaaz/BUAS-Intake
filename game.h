@@ -16,8 +16,6 @@ namespace Tmpl8 {
 
 	class Game {
 		enum class Scene { Main, Game };
-		Surface* screen;
-		Input* input;
 	public:
 		// member data access
 		const float& GetGravity() { return m_Gravity; }
@@ -34,5 +32,7 @@ namespace Tmpl8 {
 		const float m_Gravity = 9.81;
 		const float m_Deceleration = 0.995;
 		Scene m_Scene = Scene::Main;
+		Surface* screen;
+		Input* input;
 	};
 };

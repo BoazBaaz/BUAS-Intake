@@ -7,7 +7,7 @@ namespace Tmpl8 {
 
 	// Variables (Game Scene)
 	Sprite s_Player(new Surface("assets/ball.png"), 1);
-	Player player(s_Player, vec2(375, 462), vec2(4, -20), 20);
+	Player player(s_Player, vec2(375, 460), vec2(8, -20), 40);
 
 	Sprite s_Platform0(new Surface("assets/balk.png"), 1);
 	GameObject platform0(s_Platform0, vec2(500, 200));
@@ -38,37 +38,14 @@ namespace Tmpl8 {
 				
 				player.Update(this, screen, input, dt);
 				for (GameObject& gameObject : gameObjects) {
-					gameObject.Update(this, screen, dt);
+					gameObject.Update(&player, this, screen, dt);
+					player.CircleRectCollision(gameObject);
 				}
 				break;
 			default:
 				break;
 		}
 	}
-
-	//void Game::Collision(GameObject& p) {
-	//	// Screen boundry collision
-	//	if (p.GetPosition().x < 0 || p.GetPosition().x + p.GetSprite().GetWidth() > ScreenWidth) {
-	//		p.GetPosition().x = std::max((float) 0, std::min(p.GetPosition().x, (float) ScreenWidth - p.GetSprite().GetWidth()));
-	//		p.GetVelocity().x = -p.GetVelocity().x;
-	//	}
-	//	if (p.GetPosition().y < 0 || p.GetPosition().y + p.GetSprite().GetHeight() > ScreenHeight) {
-	//		p.GetPosition().y = std::max((float) 0, std::min(p.GetPosition().y, (float) ScreenHeight - p.GetSprite().GetHeight()));
-	//		p.GetVelocity().y = -p.GetVelocity().y;
-	//	}
-
-	//	// Object collision
-	//	/*for each (object var in collection_to_loop) {
-	//	}*/
-	//	if (p.GetPosition().x <= platform.GetPosition().x + platform.GetSprite().GetWidth() &&
-	//		p.GetPosition().x + p.GetSprite().GetWidth() >= platform.GetPosition().x &&
-	//		p.GetPosition().y <= platform.GetPosition().y + platform.GetSprite().GetHeight() &&
-	//		p.GetPosition().y + p.GetSprite().GetHeight() >= platform.GetPosition().y) {
-	//		
-	//		p.GetVelocity().x = -p.GetVelocity().x;
-	//		p.GetVelocity().y = -p.GetVelocity().y;
-	//	}
-	//}
 
 	bool Game::Button(GameObject sObj) {
 		sObj.GetSprite().SetFrame(0);
