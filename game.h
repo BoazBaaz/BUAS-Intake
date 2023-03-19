@@ -6,6 +6,7 @@
 #include "gameobject.h"
 #include "SDL_Scancode.h"
 #include <iostream>
+#include <algorithm>
 #include <string>
 
 namespace Tmpl8 {

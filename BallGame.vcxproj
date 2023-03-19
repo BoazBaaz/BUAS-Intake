@@ -236,6 +236,7 @@
     <ClInclude Include="template.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="TODO.txt" />
     <Text Include="_readme.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

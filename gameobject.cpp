@@ -34,7 +34,7 @@ namespace Tmpl8 {
 
 	// >> GameObject and related special operators << //
 
-	void GameObject::Update(Player* player, Game* game, Surface* screen, float& dt) {
+	void GameObject::Update(Surface* screen) {
 		// check if the GameObject is on screen, and update the on screen variable
 		if (m_Position.x + m_SpriteSize.x > 0 && m_Position.x < ScreenWidth &&
 			m_Position.y + m_SpriteSize.y > 0 && m_Position.y < ScreenHeight) {
@@ -43,21 +43,30 @@ namespace Tmpl8 {
 			m_OnScreen = false;
 		}
 
-		// update the position if the objectType is Dynamic
-		if (m_ObjectType == ObjectType::Dynamic) {
-			Physics(game, dt);
-		}
+		// update the groudCollision 
+		m_GroundCollision = (m_Position.y + m_SpriteSize.y >= ScreenHeight - m_GroundBuffer) ? true : false;
 
-		// TODO: Alway have the player x position be the center of the screen
-		// TODO: Calcule in the Update if a object is on screen
-		// TODO: Draw object relative to the player
 		// only draw the object if it is on screen
 		if (m_OnScreen) {
 			m_Sprite.Draw(screen, (int)m_Position.x, (int)m_Position.y);
 		}
 	}
 
-	void Player::Update(Game* game, Surface* screen, Input* input, float& dt)  {
+	void GameObject::BouncePhysics(Game* game, float& dt) {
+		// add gravity to the Y axis of the velocity if you do not have ground collision
+		if (!m_GroundCollision) {
+			m_Velocity.y += (float)game->GetGravity() * dt;
+		}
+
+		// add deceleration to the velocity
+		m_Velocity *= game->GetDeceleration();
+
+		// update the position using the velocity, then update the centerPosition using the new position
+		m_Position += (m_Velocity * m_Speed) * dt;
+		m_CenterPosition = { m_Position.x + m_SpriteSize.x / 2.0f, m_Position.y + m_SpriteSize.y / 2.0f };
+	}
+
+	void Player::Update(Surface* screen, Input* input, float& dt)  {
 		// if you hold space add velocity on the Y axis, once groudn collision is true build up boost 
 		if (input->GetKey(SDL_SCANCODE_SPACE) && !m_GroundCollision) {
 			m_Velocity.y = m_BoostDropForce;
@@ -72,54 +81,33 @@ namespace Tmpl8 {
 			m_Boost = 0;
 		}
 
-		GameObject::Update(this, game, screen, dt);
+		GameObject::Update(screen);
 	}
 
-	void GameObject::Physics(Game* game, float& dt) {
-		m_GroundCollision = (m_Position.y >= (ScreenHeight - m_SpriteSize.y) - m_GroundBuffer) ? true : false;
-
-		// add gravity to the Y axis of the velocity if you do not have ground collision
-		if (!m_GroundCollision) {
-			m_Velocity.y += (float)game->GetGravity() * dt;
-		}
-
-		// add deceleration to the velocity
-		m_Velocity *= game->GetDeceleration();
-
-		// update the position using the velocity, then update the centerPosition using the new position
-		m_Position += (m_Velocity * m_Speed) * dt;
-		m_CenterPosition = { m_Position.x + m_SpriteSize.x / 2.0f, m_Position.y + m_SpriteSize.y / 2.0f };
-
-		// check if the object hit the bottom of the screen, if it did reverse the velocity on the Y axis
-		if (m_GroundCollision) {
-			m_Position.y = (float)ScreenHeight - m_SpriteSize.y;
-			m_Velocity.y = -m_Velocity.y;
-		}
-	}
-
-
-	void Player::CircleRectCollision(GameObject& obj) {
-		//obj.GetShape() == Shape::Rectangle
-		// TODO: Collision check
-		// TODO: Only bounce the player when they did not use the psace key to go down
-		// TODO: Make a new GetCenterPos and function and remove the old GetPos from this formula
-
+	void Player::PlayerCollision(GameObject& obj) {
 		// calculate the closest X and Y point on the obj to the player
-		float closestX = Clamp(m_CenterPosition.x, obj.GetPosition().x, obj.GetPosition().x + obj.GetSpriteSize().x);
-		float closestY = Clamp(m_CenterPosition.y, obj.GetPosition().y, obj.GetPosition().y + obj.GetSpriteSize().y);
-		std::cout << "Center: " << m_CenterPosition.x << ", " << m_CenterPosition.y << std::endl;
+		float closestX = std::max(obj.GetPosition().x, std::min(m_CenterPosition.x, obj.GetPosition().x + obj.GetSpriteSize().x));
+		float closestY = std::max(obj.GetPosition().y, std::min(m_CenterPosition.y, obj.GetPosition().y + obj.GetSpriteSize().y));
 		
 		// calculate the distance between the closest X and Y and the center of the player
 		float distanceX = m_CenterPosition.x - closestX;
 		float distanceY = m_CenterPosition.y - closestY;
 		float distance = std::sqrtf(distanceX * distanceX + distanceY * distanceY);;
 
-		std::cout << "?: " << distance << std::endl;
+		std::cout << "Center: " << m_CenterPosition.x << ", " << m_CenterPosition.y << std::endl;
+		std::cout << "Closest: " << closestX << ", " << closestY << std::endl;
+		std::cout << "Distance: " << distance << std::endl;
 		// if the distance is less than or equals the radius of the player, invert the velocity of the player 
 		if (distance <= m_SpriteSize.x / 2.0f) {
 			std::cout << "oldVel: " << m_Velocity.x << ", " << m_Velocity.y << std::endl;
 			m_Velocity = -m_Velocity;
 			std::cout << "newVel: " << m_Velocity.x << ", " << m_Velocity.y << std::endl;
+		}
+
+		// check if the object hit the bottom of the screen, if it did reverse the velocity on the Y axis
+		if (m_GroundCollision) {
+			m_Position.y = (float) ScreenHeight - m_SpriteSize.y;
+			m_Velocity.y = -m_Velocity.y;
 		}
 	}
 }

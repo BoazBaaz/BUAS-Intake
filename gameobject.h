@@ -29,10 +29,9 @@ namespace Tmpl8 {
 		bool GetGroundCollision() { return m_GroundCollision; }
 		Shape GetShape() { m_Shape; }
 		// special operations
-		virtual void Update(Player* player, Game* game, Surface* screen, float& dt);
+		void Update(Surface* screen);
+		void BouncePhysics(Game* game, float& dt);
 	protected:
-		// special operations
-		void Physics(Game* game, float& dt);
 		// attributes
 		Sprite& m_Sprite;
 		const vec2 m_SpriteSize;
@@ -54,8 +53,8 @@ namespace Tmpl8 {
 		Player(Sprite& a_Sprite, vec2 a_Position, vec2 a_Velocity, float a_PlayerSpeed);
 		// member data access
 		// special operations
-		void Update(Game* game, Surface* screen, Input* input, float& dt);
-		void CircleRectCollision(GameObject& obj);
+		void Update(Surface* screen, Input* input, float& dt);
+		void PlayerCollision(GameObject& obj);
 	private:
 		// attributes
 		const float m_MaxBoost = 1;

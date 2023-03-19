@@ -9,10 +9,9 @@ namespace Tmpl8 {
 	Sprite s_Player(new Surface("assets/ball.png"), 1);
 	Player player(s_Player, vec2(375, 460), vec2(8, -20), 40);
 
-	Sprite s_Platform0(new Surface("assets/balk.png"), 1);
-	GameObject platform0(s_Platform0, vec2(500, 200));
-	Sprite s_Platform1(new Surface("assets/balk.png"), 1);
-	GameObject platform1(s_Platform1, vec2(100, 200));
+	Sprite s_Platform(new Surface("assets/balk.png"), 1);
+	GameObject platform0(s_Platform, vec2(100, 200));
+	GameObject platform1(s_Platform, vec2(500, 200));
 
 	GameObject gameObjects[2] = {platform0, platform1};
 
@@ -36,11 +35,12 @@ namespace Tmpl8 {
 				break;
 			case Scene::Game:
 				
-				player.Update(this, screen, input, dt);
 				for (GameObject& gameObject : gameObjects) {
-					gameObject.Update(&player, this, screen, dt);
-					player.CircleRectCollision(gameObject);
+					gameObject.Update(screen);
 				}
+				player.Update(screen, input, dt);
+				player.PlayerCollision(platform1);
+				player.BouncePhysics(this, dt);
 				break;
 			default:
 				break;
