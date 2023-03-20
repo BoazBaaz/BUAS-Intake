@@ -23,7 +23,9 @@ namespace Tmpl8 {
 		vec2 GetPosition() { return m_Position; }
 		vec2 SetPosition(vec2 a_Position) { m_Position = a_Position; }
 		vec2 GetCenterPosition() { return m_CenterPosition; }
-		vec2 GetVelocity() { return m_Velocity; }
+		vec2 GetVelocity() { return m_Acceleration; }
+		vec2 SetAcceleration(vec2 a_Acceleration) { m_Acceleration = a_Acceleration; }
+		vec2 GetAcceleration() { return m_Velocity; }
 		vec2 SetVelocity(vec2 a_Velocity) { m_Velocity = a_Velocity; }
 		void SetSpeed(float a_Speed) { m_Speed = a_Speed; }
 		bool GetGroundCollision() { return m_GroundCollision; }
@@ -37,12 +39,12 @@ namespace Tmpl8 {
 		const vec2 m_SpriteSize;
 		vec2 m_Position;
 		vec2 m_CenterPosition;
+		vec2 m_Acceleration;
 		vec2 m_Velocity;
 		float m_Speed = 1.0f;
 		float m_GroundBuffer = 0.5f;
 		bool m_GroundCollision = false;
 		bool m_OnScreen = false;
-		// custom attributes
 		const Shape m_Shape;
 		const ObjectType m_ObjectType;
 	};
