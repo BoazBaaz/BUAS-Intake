@@ -11,6 +11,10 @@ namespace Tmpl8 {
 	protected:
 		enum class ObjectType { Static, Dynamic, UI }; 
 		enum class Shape { Rectangle, Circle };
+		struct Collision {
+			bool x;
+			bool y;
+		};
 	public:
 		// constructor / destructor
 		GameObject(Sprite& a_Sprite, vec2 a_Position, vec2 a_Velocity, float a_Speed, bool a_IsRectangle = true, bool a_IsDynamic = false);
@@ -26,7 +30,7 @@ namespace Tmpl8 {
 		vec2 GetVelocity() { return m_Acceleration; }
 		vec2 SetVelocity(vec2 a_Velocity) { m_Velocity = a_Velocity; }
 		void SetSpeed(float a_Speed) { m_Speed = a_Speed; }
-		bool GetGroundCollision() { return m_GroundCollision; }
+		Collision& GetCollision() { return m_Collision; }
 		Shape GetShape() { m_Shape; }
 		// special operations
 		void Update(Surface* screen);
@@ -41,7 +45,7 @@ namespace Tmpl8 {
 		vec2 m_Velocity;
 		float m_Speed = 1.0f;
 		float m_GroundBuffer = 1.0f;
-		bool m_GroundCollision = false;
+		Collision m_Collision = {false, false};
 		bool m_OnScreen = false;
 		const Shape m_Shape;
 		const ObjectType m_ObjectType;
@@ -57,11 +61,8 @@ namespace Tmpl8 {
 		void PlayerCollision(GameObject& obj);
 	private:
 		// attributes
-		const float m_MaxBoost = 1;
 		float m_Boost = 0;
 		float m_BoostPower = 30;
-		float m_BoostBuildup = 1.4;
-		float m_BoostDropForce = 200;
 		
 	};
 }
