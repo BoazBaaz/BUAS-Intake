@@ -7,7 +7,7 @@ namespace Tmpl8 {
 
 	// Variables (Game Scene)
 	Sprite s_Player(new Surface("assets/ball.png"), 1);
-	Player player(s_Player, vec2(375, 460), vec2(8, -80), 40);
+	Player player(s_Player, vec2(375, 460), vec2(8, -30), 50);
 
 	Sprite s_Platform(new Surface("assets/balk.png"), 1);
 	GameObject platform0(s_Platform, vec2(100, 200));

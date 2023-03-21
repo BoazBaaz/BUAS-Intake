@@ -53,31 +53,14 @@ namespace Tmpl8 {
 		}
 	}
 
-	void GameObject::BouncePhysics(Game* game, float& dt) {
-		// add gravity to the Y axis of the velocity
-		if (!m_GroundCollision) {
-			m_Velocity.y = (float)game->GetGravity() * dt;
-		}
-
-		// check if the object hit the bottom of the screen, if it did reverse the velocity on the Y axis
-		if (m_GroundCollision) {
-			m_Position.y = (float)ScreenHeight - m_SpriteSize.y;
-			//m_Velocity.y = -m_Velocity.y;
-		}
-
-		// add acceleration and deceleration to the velocity
-		m_Velocity *= game->GetDeceleration();
-
-		// update the position using the velocity, then update the centerPosition using the new position
-		m_Position += (m_Velocity * m_Speed) * dt;
-		m_CenterPosition = { m_Position.x + m_SpriteSize.x / 2.0f, m_Position.y + m_SpriteSize.y / 2.0f };
-	}
-
 	void Player::Update(Game* game, Surface* screen, Input* input, float& dt)  {
+		// update the GameObject member variables
+		GameObject::Update(screen);
+
 		// if you hold space add velocity on the Y axis, once groudn collision is true build up boost 
 		if (input->GetKey(SDL_SCANCODE_SPACE)) {
 			if (!m_GroundCollision) {
-				m_Velocity.y = m_BoostDropForce;
+     			m_Velocity.y = m_BoostDropForce;
 			} else {
 				m_Boost = (m_Boost < m_MaxBoost) ? (m_Boost += (m_BoostBuildup * dt)) : m_MaxBoost;
 				m_Velocity = { 0, 0 };
@@ -87,15 +70,31 @@ namespace Tmpl8 {
 		// if you release space and the ground collision is true, update the velocity and acceleration and reset the boost
 		if (input->GetKeyUp(SDL_SCANCODE_SPACE) && m_GroundCollision) {
 			m_Velocity = (input->GetMousePos() - m_Position).normalized() * (m_Boost * m_BoostPower);
-			m_Acceleration = (m_Boost * m_BoostPower);
 			m_Boost = 0;
 		}
 
-		// update the GameObject member variables
-		GameObject::Update(screen);
-
 		// update the player position
 		BouncePhysics(game, dt);
+	}
+
+	void GameObject::BouncePhysics(Game* game, float& dt) {
+		// add gravity to the Y axis of the velocity
+		if (!m_GroundCollision) {
+			m_Velocity.y += (float)game->GetGravity() * dt;
+		}
+
+		// check if the object hit the bottom of the screen, if it did reverse the velocity on the Y axis
+		if (m_GroundCollision) {
+			m_Position.y = (float)ScreenHeight - m_SpriteSize.y;
+			m_Velocity.y = -m_Velocity.y;
+		}
+
+		// add acceleration and deceleration to the velocity
+		m_Velocity *= game->GetDeceleration();
+
+		// update the position using the velocity, then update the centerPosition using the new position
+		m_Position += (m_Velocity * m_Speed) * dt;
+		m_CenterPosition = { m_Position.x + m_SpriteSize.x / 2.0f, m_Position.y + m_SpriteSize.y / 2.0f };
 	}
 
 	void Player::PlayerCollision(GameObject& obj) {
@@ -110,14 +109,9 @@ namespace Tmpl8 {
 
 		// if the distance is less than or equals the radius of the player, invert the velocity of the player 
 		if (distance <= m_SpriteSize.x / 2.0f) {
+			//m_Position = 
 			m_Velocity = -m_Velocity;
 		}
-		/*if (distanceY <= m_SpriteSize.y / 2.0f) {
-			m_Velocity.y = -m_Velocity.y;
-		}
-		if (distanceX <= m_SpriteSize.x / 2.0f) {
-			m_Velocity.x = -m_Velocity.x;
-		}*/
 
 		std::cout << "Pos: " << m_Position.x << ", " << m_Position.y << std::endl;
 		std::cout << "Vel: " << m_Velocity.x << ", " << m_Velocity.y << std::endl;
