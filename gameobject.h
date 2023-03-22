@@ -40,7 +40,7 @@ namespace Tmpl8 {
 		vec2 m_Acceleration;
 		vec2 m_Velocity;
 		float m_Speed = 1.0f;
-		float m_GroundBuffer = 1.0f;
+		float m_GroundBuffer = 0.1f;
 		bool m_GroundCollision = false;
 		bool m_OnScreen = false;
 		const Shape m_Shape;
