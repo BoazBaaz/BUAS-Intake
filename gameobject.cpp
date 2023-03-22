@@ -44,8 +44,13 @@ namespace Tmpl8 {
 			m_OnScreen = false;
 		}
 
-		// update the groudCollision 
-		m_GroundCollision = (m_Position.y + m_SpriteSize.y >= ScreenHeight - m_GroundBuffer) ? true : false;
+		// check if the
+		if (m_Position.y + m_SpriteSize.y >= ScreenHeight - m_GroundBuffer) {
+			m_Position.y = (float) ScreenHeight - m_SpriteSize.y;
+			m_Velocity.y = -m_Velocity.y;
+
+			m_GroundCollision = true;
+		}
 
 		// only draw the object if it is on screen
 		if (m_OnScreen) {
@@ -54,6 +59,11 @@ namespace Tmpl8 {
 	}
 
 	void Player::Update(Game* game, Surface* screen, Input* input, float& dt)  {
+		std::cout << "Pos: " << m_Position.x << ", " << m_Position.y << std::endl;
+		std::cout << "Vel: " << m_Velocity.x << ", " << m_Velocity.y << std::endl;
+		std::cout << "Ground: " << m_GroundCollision << std::endl;
+		std::cout << "-----------" << std::endl;
+
 		// update the GameObject member variables
 		GameObject::Update(screen);
 
@@ -83,18 +93,15 @@ namespace Tmpl8 {
 			m_Velocity.y += (float)game->GetGravity() * dt;
 		}
 
-		// check if the object hit the bottom of the screen, if it did reverse the velocity on the Y axis
-		if (m_GroundCollision) {
-			m_Position.y = (float)ScreenHeight - m_SpriteSize.y;
-			m_Velocity.y = -m_Velocity.y;
-		}
-
 		// add acceleration and deceleration to the velocity
 		m_Velocity *= game->GetDeceleration();
 
 		// update the position using the velocity, then update the centerPosition using the new position
 		m_Position += (m_Velocity * m_Speed) * dt;
 		m_CenterPosition = { m_Position.x + m_SpriteSize.x / 2.0f, m_Position.y + m_SpriteSize.y / 2.0f };
+
+		// reset ground collision
+		m_GroundCollision = false;
 	}
 
 	void Player::PlayerCollision(GameObject& obj) {
@@ -107,17 +114,33 @@ namespace Tmpl8 {
 		float distanceY = m_CenterPosition.y - closestY;
 		float distance = std::sqrt((distanceX * distanceX) + (distanceY * distanceY));
 
-		// if the distance is less than or equals the radius of the player, invert the velocity of the player 
+		// check if distance is less then the radius of the player
 		if (distance <= m_SpriteSize.x / 2.0f) {
-			//m_Position = 
-			m_Velocity = -m_Velocity;
+			// determine what axis the player hit
+			if (std::abs(distanceX) > std::abs(distanceY)){
+				// invert the x velocity
+				m_Velocity.x = -m_Velocity.x;
+
+				// determain the side of the obj the player hit, then set the position to the bound of the obj
+				if (distanceX > 0) {
+					m_Position.x = obj.GetPosition().x + obj.GetSpriteSize().x;
+				} else {
+					m_Position.x = obj.GetPosition().x - m_SpriteSize.x;
+				}
+			} else {
+				// set the ground collision to true
+				m_GroundCollision = true;
+
+				// invert the y velocity
+				m_Velocity.y = -m_Velocity.y;
+
+				// determain the side of the obj the player hit, then set the position to the bound of the obj
+				if (distanceY > 0) {
+					m_Position.y = obj.GetPosition().y + obj.GetSpriteSize().y;
+				} else {
+					m_Position.y = obj.GetPosition().y - m_SpriteSize.y;
+				}
+			}
 		}
-
-		std::cout << "Pos: " << m_Position.x << ", " << m_Position.y << std::endl;
-		std::cout << "Vel: " << m_Velocity.x << ", " << m_Velocity.y << std::endl;
-		std::cout << "Ground: " << m_GroundCollision << std::endl;
-		std::cout << "-----------" << std::endl;
-
-
 	}
 }

@@ -61,7 +61,7 @@ namespace Tmpl8 {
 		float m_Boost = 0;
 		float m_BoostPower = 30;
 		float m_BoostBuildup = 1.4;
-		float m_BoostDropForce = 200;
+		float m_BoostDropForce = 30;
 		
 	};
 }
