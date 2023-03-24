@@ -30,8 +30,8 @@ namespace Tmpl8 {
 		void ChangeScene(Scene a_Scene) { m_Scene = a_Scene; screen->Clear(0); };
 	private:
 		// attributes
-		const float m_Gravity = 9.81;
-		const float m_Deceleration = 0.995;
+		const float m_Gravity = 18.0f;
+		const float m_Deceleration = 0.995f;
 		Scene m_Scene = Scene::Main;
 		Surface* screen;
 		Input* input;

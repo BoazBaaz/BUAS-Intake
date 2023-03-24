@@ -2,7 +2,22 @@
 
 Things I still need to do:
 
-	Only bounce the player when they did not use the psace key to go down
-	Alway have the player x position be the center of the screen
-	Calcule in the Update if a object is on screen
-	Draw object relative to the player
+Must:
+	Top-to-Bottom scroller
+	Cloud background
+	Death at the bottem of the screen.
+	Looping x posiiton
+	Random platforms
+	Platform go down
+
+Should:
+	Title screen
+	Death screen
+
+Could:
+	Opstacles
+	Score
+
+Would:
+	Enemies
+	More backgrounds

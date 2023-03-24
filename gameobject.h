@@ -9,7 +9,7 @@ namespace Tmpl8 {
 
 	class GameObject {
 	protected:
-		enum class ObjectType { Static, Dynamic, UI }; 
+		enum class ObjectType { Static, Dynamic }; 
 		enum class Shape { Rectangle, Circle };
 	public:
 		// constructor / destructor
@@ -26,11 +26,9 @@ namespace Tmpl8 {
 		vec2 GetVelocity() { return m_Acceleration; }
 		vec2 SetVelocity(vec2 a_Velocity) { m_Velocity = a_Velocity; }
 		void SetSpeed(float a_Speed) { m_Speed = a_Speed; }
-		bool GetGroundCollision() { return m_GroundCollision; }
 		Shape GetShape() { m_Shape; }
 		// special operations
-		void Update(Surface* screen);
-		void BouncePhysics(Game* game, float& dt);
+		void Update(Surface* screen, float& dt);
 	protected:
 		// attributes
 		Sprite& m_Sprite;
@@ -40,8 +38,6 @@ namespace Tmpl8 {
 		vec2 m_Acceleration;
 		vec2 m_Velocity;
 		float m_Speed = 1.0f;
-		float m_GroundBuffer = 0.1f;
-		bool m_GroundCollision = false;
 		bool m_OnScreen = false;
 		const Shape m_Shape;
 		const ObjectType m_ObjectType;
@@ -52,16 +48,18 @@ namespace Tmpl8 {
 		// constructor / destructor
 		Player(Sprite& a_Sprite, vec2 a_Position, vec2 a_Velocity, float a_PlayerSpeed);
 		// member data access
+		bool GetGroundCollision() { return m_GroundCollision; }
 		// special operations
 		void Update(Game* game, Surface* screen, Input* input, float& dt);
-		void PlayerCollision(GameObject& obj);
+		void BouncePhysics(Game* game, float& dt);
+		void PlayerCollision(GameObject& a_CollisionObject);
 	private:
 		// attributes
-		const float m_MaxBoost = 1;
-		float m_Boost = 0;
+		bool m_Boost = false;
 		float m_BoostPower = 30;
-		float m_BoostBuildup = 1.4;
 		float m_BoostDropForce = 30;
+		float m_GroundBuffer = 0.2f;
+		bool m_GroundCollision = false;
 		
 	};
 }
