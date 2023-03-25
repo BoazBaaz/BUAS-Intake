@@ -1,81 +1,94 @@
 #include "game.h"
 
 namespace Tmpl8 {
-	// Variables (Main Scene)
-	Sprite startButtonSprite(new Surface("assets/start_button.png"), 2);
-	GameObject startButton(startButtonSprite, vec2(300, 412));
+	// >> Variables (Main Scene) << //
+	
+	// Background
+	Sprite m_TitleBGSprite(new Surface("assets/cloud_background.png"), 1);
 
-	// Variables (Game Scene)
-	Sprite backgroundSprite(new Surface("assets/cloud_background.png"), 1);
-	vec2 bgPosition(0, 0);
-	float bgSlideSpeed = 100.0f;
+	//Buttons
+	Sprite m_StartButtonSprite(new Surface("assets/start_button.png"), 2);
+	UI m_StartButton(m_StartButtonSprite, vec2(300, 412));
 
-	Sprite playerSprite(new Surface("assets/ball.png"), 1);
-	Player player(playerSprite, vec2(375, 460), vec2(0, 0), 40);
+	// >> Variables (Game Scene) << //
 
-	// Platform Objectpool :)
-	Sprite platformSprite(new Surface("assets/platform200x40.png"), 1);
-	GameObject platform0(platformSprite, vec2(100, -100), vec2(0, 1), 40, true, true);
-	GameObject platform1(platformSprite, vec2(250, -300), vec2(0, 1), 40, true, true);
-	GameObject platform2(platformSprite, vec2(400, -400), vec2(0, 1), 40, true, true);
-	GameObject platform3(platformSprite, vec2(550, -200), vec2(0, 1), 40, true, true);
+	// Background
+	Sprite m_GameBGSprite(new Surface("assets/cloud_background.png"), 1);
+	vec2 m_GameBGPosition(0, 0);
+	float m_GameBGSlideSpeed = 100.0f;
 
-	GameObject platforms[4] = {platform0, platform1, platform2, platform3};
+	// Player
+	Sprite m_PlayerSprite(new Surface("assets/ball.png"), 1);
+	Player m_Player(m_PlayerSprite, vec2(375, 460), vec2(-40, -20), 40);
+
+	// Platforms
+	Sprite m_PlatformSprite(new Surface("assets/platform200x40.png"), 1);
+	GameObject m_Platform0(m_PlatformSprite, vec2(100, -100), vec2(0, 1), 40, true, true);
+	GameObject m_Platform1(m_PlatformSprite, vec2(250, -300), vec2(0, 1), 40, true, true);
+	GameObject m_Platform2(m_PlatformSprite, vec2(400, -400), vec2(0, 1), 40, true, true);
+	GameObject m_Platform3(m_PlatformSprite, vec2(550, -200), vec2(0, 1), 40, true, true);
+	GameObject m_Platforms[4] = {m_Platform0, m_Platform1, m_Platform2, m_Platform3};
 
 	// On start
 	void Game::Init() {
+		// load the highscore
+		std::ifstream saveFile("saveData/highscore.save");
+		saveFile >> m_HighScore;
+		saveFile.close();
 	}
 
 	// On close
 	void Game::Shutdown() {
+		// save the highscore
+		std::ofstream saveFile("saveData/highscore.save");
+		saveFile << m_HighScore;
+		saveFile.close();
 	}
 
 	// Every frame
 	void Game::Tick(float dt) {
 		screen->Clear(0);
-
+		std::cout << m_HighScore << std::endl;
 		switch (m_Scene) {
-			case Scene::Main:
-				if (Button(startButton)) {
+			case Scene::Title:
+				m_TitleBGSprite.Draw(screen, 0, 0);
+
+				m_StartButton.Update(screen, input);
+				if (m_StartButton.ButtonPressed()) {
 					ChangeScene(Scene::Game);
 				}
 				break;
 			case Scene::Game:
-				// add bg_position and draw the background
-				if (bgPosition.x >= ScreenWidth) {
-					bgPosition = 0;
+				// if the background is at the end of the screen set the position on the x axis to 0, slide it to the right
+				if (m_GameBGPosition.x >= ScreenWidth) {
+					m_GameBGPosition = 0;
 				} else {
-					bgPosition.x += bgSlideSpeed * dt;
+					m_GameBGPosition.x += m_GameBGSlideSpeed * dt;
 				}
-				backgroundSprite.Draw(screen, (int)bgPosition.x, (int)bgPosition.y);
-				backgroundSprite.Draw(screen, (int)bgPosition.x - ScreenWidth, (int)bgPosition.y);
+
+				// draw the background at the position and to the left screenwidth value of the position
+				m_GameBGSprite.Draw(screen, (int) m_GameBGPosition.x, (int) m_GameBGPosition.y);
+				m_GameBGSprite.Draw(screen, (int) m_GameBGPosition.x - ScreenWidth, (int) m_GameBGPosition.y);
 
 				// update and draw all the object in the game
-				player.Update(this, screen, input, dt);
-				for (GameObject& platform : platforms) {
+				m_Player.Update(this, screen, input, dt);
+				for (GameObject& platform : m_Platforms) {
 					platform.Update(screen, dt);
-					player.PlayerCollision(platform);
+					m_Player.PlatformCollision(platform);
 				}
+				break;
+			case Scene::Gameover:
 				break;
 			default:
 				break;
 		}
 	}
 
-	bool Game::Button(GameObject sObj) {
-		sObj.GetSprite().SetFrame(0);
-		sObj.GetSprite().Draw(screen, (int)sObj.GetPosition().x, (int) sObj.GetPosition().y);
-		if (input->GetMousePos().x >= (int) sObj.GetPosition().x && input->GetMousePos().x <= (int) sObj.GetPosition().x + sObj.GetSprite().GetWidth()) {
-			if (input->GetMousePos().y >= (int) sObj.GetPosition().y && input->GetMousePos().y <= (int) sObj.GetPosition().y + sObj.GetSprite().GetHeight()) {
-				if (input->GetMouseButton(1)) {
-					sObj.GetSprite().SetFrame(1);
-					sObj.GetSprite().Draw(screen, (int) sObj.GetPosition().x, (int) sObj.GetPosition().y);
-				}
-				if (input->GetMouseButtonUp(1)) {
-					return true;
-				}
-			}
+	void Game::Gameover() {
+		if (m_HighScore < m_Score) {
+			m_HighScore = m_Score;
 		}
-		return false;
+
+		ChangeScene(Scene::Gameover);
 	}
 };

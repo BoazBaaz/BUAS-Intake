@@ -9,13 +9,13 @@ namespace Tmpl8 {
 
 	class GameObject {
 	protected:
-		enum class ObjectType { Static, Dynamic }; 
+		enum class ObjectType { Static, Dynamic}; 
 		enum class Shape { Rectangle, Circle };
 	public:
 		// constructor / destructor
-		GameObject(Sprite& a_Sprite, vec2 a_Position, vec2 a_Velocity, float a_Speed, bool a_IsRectangle = true, bool a_IsDynamic = false);
-		GameObject(Sprite& a_Sprite, vec2 a_Position, vec2 a_Velocity, bool a_IsRectangle = true, bool a_IsDynamic = false);
-		GameObject(Sprite& a_Sprite, vec2 a_Position);
+		GameObject(Sprite& a_Sprite, vec2 a_Position, vec2 a_Velocity, float a_Speed, bool a_IsRectangle = true, bool a_IsDynamic = false); // sprite, pos, vel, speed
+		GameObject(Sprite& a_Sprite, vec2 a_Position, vec2 a_Velocity, bool a_IsRectangle = true, bool a_IsDynamic = false);				// sprite, pos, vel
+		GameObject(Sprite& a_Sprite, vec2 a_Position, bool a_IsRectangle = true, bool a_IsDynamic = false);									// sprite, pos
 		~GameObject() = default;
 		// member data access
 		Sprite& GetSprite() { return m_Sprite; }
@@ -26,7 +26,6 @@ namespace Tmpl8 {
 		vec2 GetVelocity() { return m_Acceleration; }
 		vec2 SetVelocity(vec2 a_Velocity) { m_Velocity = a_Velocity; }
 		void SetSpeed(float a_Speed) { m_Speed = a_Speed; }
-		Shape GetShape() { m_Shape; }
 		// special operations
 		void Update(Surface* screen, float& dt);
 	protected:
@@ -47,12 +46,13 @@ namespace Tmpl8 {
 	public:
 		// constructor / destructor
 		Player(Sprite& a_Sprite, vec2 a_Position, vec2 a_Velocity, float a_PlayerSpeed);
+		~Player() = default;
 		// member data access
 		bool GetGroundCollision() { return m_GroundCollision; }
 		// special operations
 		void Update(Game* game, Surface* screen, Input* input, float& dt);
 		void BouncePhysics(Game* game, float& dt);
-		void PlayerCollision(GameObject& a_CollisionObject);
+		void PlatformCollision(GameObject& a_CollisionObject);
 	private:
 		// attributes
 		bool m_Boost = false;
@@ -60,6 +60,22 @@ namespace Tmpl8 {
 		float m_BoostDropForce = 30;
 		float m_GroundBuffer = 0.2f;
 		bool m_GroundCollision = false;
-		
+	};
+
+	class UI : public GameObject {
+		enum class ButtonState { None, Hover, Pressed, Held, Released};
+	public:
+		// constructor / destructor
+		UI(Sprite& a_Sprite, vec2 a_Position, bool a_IsRectangle = true);
+		~UI() = default;
+		// member data access
+		bool ButtonPressed() { return m_ButtonState == ButtonState::Pressed; }
+		bool ButtonHold() { return m_ButtonState == ButtonState::Held; }
+		bool ButtonReleased() { return m_ButtonState == ButtonState::Released; }
+		// special operations
+		void Update(Surface* screen, Input* input);
+	private:
+		// attributes
+		ButtonState m_ButtonState;
 	};
 }

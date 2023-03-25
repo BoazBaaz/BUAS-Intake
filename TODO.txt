@@ -3,20 +3,25 @@
 Things I still need to do:
 
 Must:
-	Top-to-Bottom scroller
-	Cloud background
-	Death at the bottem of the screen.
-	Looping x posiiton
+	-Top-to-Bottom scroller
+	-Cloud background
+	-Death at the bottem of the screen.
+	-Looping x posiiton
 	Random platforms
-	Platform go down
+	-Platform go down
+	Better platform collision
 
 Should:
 	Title screen
 	Death screen
+	Add score when you hit a platform
+	-Highscore
+	
 
 Could:
 	Opstacles
-	Score
+	-Better buttons
+	
 
 Would:
 	Enemies

@@ -21,16 +21,21 @@ namespace Tmpl8 {
 		m_SpriteSize((float) a_Sprite.GetWidth(), (float) a_Sprite.GetHeight()) {
 	}
 
-	GameObject::GameObject(Sprite& a_Sprite, vec2 a_Position) :
+	GameObject::GameObject(Sprite& a_Sprite, vec2 a_Position, bool a_IsRectangle, bool a_IsDynamic) :
 		m_Sprite(a_Sprite),
 		m_Position(a_Position),
-		m_Shape(Shape::Rectangle),
-		m_ObjectType(ObjectType::Static),
-		m_SpriteSize((float)a_Sprite.GetWidth(), (float)a_Sprite.GetHeight()) {
+		m_Shape(a_IsRectangle ? Shape::Rectangle : Shape::Circle),
+		m_ObjectType(a_IsDynamic ? ObjectType::Dynamic : ObjectType::Static),
+		m_SpriteSize((float) a_Sprite.GetWidth(), (float) a_Sprite.GetHeight()) {
 	}
 
 	Player::Player(Sprite& a_Sprite, vec2 a_Position, vec2 a_Velocity, float a_PlayerSpeed) :
 		GameObject(a_Sprite, a_Position, a_Velocity, a_PlayerSpeed, false, true) {
+	}
+
+	UI::UI(Sprite& a_Sprite, vec2 a_Position, bool a_IsRectangle) :
+		GameObject(a_Sprite, a_Position, a_IsRectangle),
+		m_ButtonState(ButtonState::None) {
 	}
 
 	// >> GameObject and related special operators << //
@@ -68,15 +73,16 @@ namespace Tmpl8 {
 			m_OnScreen = false;
 		}
 
-		// check if the player hit the bottem of the screen and set the groundCollision accordingly
+		// check if the player hit the bottem of the screen, if it did gameover
 		if (m_Position.y + m_SpriteSize.y >= ScreenHeight - m_GroundBuffer) {
-			// invert the velocity
-			m_Velocity.y = -m_Velocity.y;
-			
-			//set the position to the "ground"
-			m_Position.y = (float)ScreenHeight - m_SpriteSize.y;
+			game->Gameover();
+		}
 
-			m_GroundCollision = true;
+		// make the player always be inside the screen in the x axis
+		if (m_Position.x > ScreenWidth) {
+			m_Position.x = 0 - m_SpriteSize.x;
+		} else if (m_Position.x + m_SpriteSize.x < 0) {
+			m_Position.x = ScreenWidth;
 		}
 
 		// if you hold space add velocity on the Y axis, once groudn collision is true build up boost 
@@ -123,7 +129,7 @@ namespace Tmpl8 {
 		m_GroundCollision = false;
 	}
 
-	void Player::PlayerCollision(GameObject& a_CollisionObject) {
+	void Player::PlatformCollision(GameObject& a_CollisionObject) {
 		// calculate the closest X and Y point on the obj to the player
 		float closestX = std::max(a_CollisionObject.GetPosition().x, std::min(m_CenterPosition.x, a_CollisionObject.GetPosition().x + a_CollisionObject.GetSpriteSize().x));
 		float closestY = std::max(a_CollisionObject.GetPosition().y, std::min(m_CenterPosition.y, a_CollisionObject.GetPosition().y + a_CollisionObject.GetSpriteSize().y));
@@ -160,6 +166,52 @@ namespace Tmpl8 {
 					m_Position.y = a_CollisionObject.GetPosition().y - m_SpriteSize.y;
 				}
 			}
+		}
+	}
+
+	void UI::Update(Surface* screen, Input* input) {
+		// check if the GameObject is on screen, and update the on screen variable
+		if (m_Position.x + m_SpriteSize.x > 0 && m_Position.x < ScreenWidth &&
+			m_Position.y + m_SpriteSize.y > 0 && m_Position.y < ScreenHeight) {
+			m_OnScreen = true;
+		}
+		else {
+			m_OnScreen = false;
+		}
+
+		//update the center position
+		m_CenterPosition = {m_Position.x + m_SpriteSize.x / 2.0f, m_Position.y + m_SpriteSize.y / 2.0f};
+
+		// reset the button frame
+
+		// check if the mouse is above the button, if not set the buttonstate to none
+		if (input->GetMousePos().x >= (int)m_Position.x && 
+			input->GetMousePos().x <= (int) m_Position.x + m_Sprite.GetWidth() &&
+			input->GetMousePos().y >= (int) m_Position.y && 
+			input->GetMousePos().y <= (int) m_Position.y + m_Sprite.GetHeight()) {
+
+			// check if a mouse button was pressed, held or released, then set the buttonState accordingly
+			if (input->GetMouseButtonDown(1)) {
+				m_ButtonState = ButtonState::Pressed;
+				m_Sprite.SetFrame(1);
+			} else if (input->GetMouseButton(1)) {
+				m_ButtonState = ButtonState::Held;
+				m_Sprite.SetFrame(1);
+			} else if (input->GetMouseButtonUp(1)) {
+				m_ButtonState = ButtonState::Released;
+				m_Sprite.SetFrame(0);
+			} else {
+				m_ButtonState = ButtonState::Hover;
+				m_Sprite.SetFrame(0); // possibility to add a frame for when you hover over the button
+			}
+		} else {
+			m_ButtonState = ButtonState::None;
+			m_Sprite.SetFrame(0);
+		}
+
+		// only draw the object if it is on screen
+		if (m_OnScreen) {
+			m_Sprite.Draw(screen, (int) m_Position.x, (int) m_Position.y);
 		}
 	}
 }
