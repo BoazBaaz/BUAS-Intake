@@ -7,14 +7,14 @@ Must:
 	-Cloud background
 	-Death at the bottem of the screen.
 	-Looping x posiiton
-	Random platforms
+	-Random platforms
 	-Platform go down
 	Better platform collision
 
 Should:
 	Title screen
 	Death screen
-	Add score when you hit a platform
+	-Add score when you hit a platform
 	-Highscore
 	
 
