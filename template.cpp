@@ -320,7 +320,7 @@ int main(int argc, char** argv) {
 		}
 
 		// calculate frame time and pass it to game->Tick
-		game->Tick(time.delta_time());
+		exitapp = game->Tick(time.delta_time());
 		controls->UpdateInputState();
 
 		// event loop

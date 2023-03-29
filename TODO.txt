@@ -10,12 +10,14 @@ Must:
 	-Random platforms
 	-Platform go down
 	Better platform collision
+	Make the platform reset
 
 Should:
-	Title screen
+	-Title screen
 	Death screen
 	-Add score when you hit a platform
 	-Highscore
+	Display the current score
 	
 
 Could:

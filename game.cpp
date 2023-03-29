@@ -1,36 +1,36 @@
 #include "game.h"
 
 namespace Tmpl8 {
-	// >> Variables (Main Scene) << //
-	// Background
-	Sprite m_TitleBGSprite(new Surface("assets/title_background.png"), 1);
-
-	//Buttons
-	Sprite m_StartButtonSprite(new Surface("assets/start_button.png"), 2);
-	UI m_StartButton(m_StartButtonSprite, vec2(300, 412));
-
-	// >> Variables (Game Scene) << //
-	// Background
-	Sprite m_GameBGSprite(new Surface("assets/cloud_background.png"), 1);
-	vec2 m_GameBGPosition(0, 0);
-	float m_GameBGSlideSpeed = 100.0f;
+	// Backgrounds
+	Sprite bgTitleSprite(new Surface("assets/title_background.png"), 1);
+	Sprite bgGameSprite(new Surface("assets/cloud_background.png"), 1);
+	vec2 bgGamePosition(0, 0);
+	float bgGameSlideSpeed = 100.0f;
 
 	// Player
-	Sprite m_PlayerSprite(new Surface("assets/ball.png"), 1);
-	Player m_Player(m_PlayerSprite, vec2(375, 231), vec2(0, 0), 40);
+	Sprite playerSprite(new Surface("assets/ball.png"), 1);
+	Player player(playerSprite, {375, 231}, {0, 0}, 40);
 
 	// Platforms
-	Sprite m_PlatformSprite(new Surface("assets/platform200x40.png"), 1);
-	Platform m_Platform0(m_PlatformSprite, vec2(300, 282), vec2(0, 1), 40);
-	Platform m_Platform1(m_PlatformSprite, vec2(100, 82), vec2(0, 1), 40);
-	Platform m_Platform2(m_PlatformSprite, vec2(500, -118), vec2(0, 1), 40);
-	Platform m_Platforms[3] = {m_Platform0, m_Platform1, m_Platform2};
+	Sprite platformSprite(new Surface("assets/platform200x40.png"), 1);
+	Platform platform0(platformSprite, {300, 282}, {0, 1}, 40);
+	Platform platform1(platformSprite, {100, 82}, {0, 1}, 40);
+	Platform platform2(platformSprite, {500, -118}, {0, 1}, 40);
+	Platform platforms[3] = {platform0, platform1, platform2};
+
+	//Buttons
+	Sprite startButtonSprite(new Surface("assets/start_button.png"), 3);
+	Sprite retryButtonSprite(new Surface("assets/retry_button.png"), 3);
+	Sprite quitButtonSprite(new Surface("assets/quit_button.png"), 3);
+	UI startButton(startButtonSprite, vec2(300, 280));
+	UI retryButton(retryButtonSprite, vec2(300, 280));
+	UI quitButton(quitButtonSprite, vec2(300, 380));
 
 	// On start
 	void Game::Init() {
 		// load the highscore
 		std::ifstream saveFile("saveData/highscore.save");
-		saveFile >> m_HighScore;
+		saveFile >> highScore;
 		saveFile.close();
 	}
 
@@ -38,54 +38,89 @@ namespace Tmpl8 {
 	void Game::Shutdown() {
 		// save the highscore
 		std::ofstream saveFile("saveData/highscore.save");
-		saveFile << m_HighScore;
+		saveFile << highScore;
 		saveFile.close();
 	}
 
 	// Every frame
-	void Game::Tick(float dt) {
+	int Game::Tick(float dt) {
 		screen->Clear(0);
+		std::cout << curScore << std::endl;
 
-		switch (m_Scene) {
+		switch (curScene) {
 			case Scene::Title:
 				// draw the background
-				m_TitleBGSprite.Draw(screen, 0, 0);
+				bgTitleSprite.Draw(screen, 0, 0);
 
-				// update the button then check if the button was pressed
-				m_StartButton.Update(screen, input);
-				if (m_StartButton.Pressed()) {
-					ChangeScene(Scene::Game);
+				// update the start button then check if the button was pressed
+				startButton.Update(screen, input);
+				if (startButton.Released()) {
+					StartGame();
+				}
+
+				// update the quit button then check if the button was pressed
+				quitButton.Update(screen, input);
+				if (quitButton.Released()) {
+					return 1;
 				}
 				break;
 			case Scene::Game:
 				// if the background is at the end of the screen set the position on the x axis to 0, slide it to the right
-				if (m_GameBGPosition.x >= ScreenWidth) {
-					m_GameBGPosition = 0;
+				if (bgGamePosition.x >= ScreenWidth) {
+					bgGamePosition = 0;
 				} else {
-					m_GameBGPosition.x += m_GameBGSlideSpeed * dt;
+					bgGamePosition.x += bgGameSlideSpeed * dt;
 				}
-				std::cout << m_Score << std::endl;
+
 				// draw the background at the position and to the left screenwidth value of the position
-				m_GameBGSprite.Draw(screen, (int) m_GameBGPosition.x, (int) m_GameBGPosition.y);
-				m_GameBGSprite.Draw(screen, (int) m_GameBGPosition.x - ScreenWidth, (int) m_GameBGPosition.y);
+				bgGameSprite.Draw(screen, (int) bgGamePosition.x, (int) bgGamePosition.y);
+				bgGameSprite.Draw(screen, (int) bgGamePosition.x - ScreenWidth, (int) bgGamePosition.y);
 
 				// update and draw all the object in the game
-				m_Player.Update(this, screen, input, dt);
-				for (Platform& platform : m_Platforms) {
+				player.Update(this, screen, input, dt);
+				for (Platform& platform : platforms) {
 					platform.Update(screen, dt);
-					m_Player.PlatformCollision(this, platform);
+					player.PlatformCollision(this, platform);
 				}
+
+				screen->Print("Score: ", 0, 0, 0);
+				//screen->Print((char*) curScore, 0, 0, 0); //TODO: display score
 				break;
 			case Scene::Gameover:
+				// update the retry button then check if the button was pressed
+				retryButton.Update(screen, input);
+				if (retryButton.Released()) {
+					StartGame();
+				}
+
+				// update the quit button then check if the button was pressed
+				quitButton.Update(screen, input);
+				if (quitButton.Released()) {
+					ChangeScene(Scene::Title);
+				}
 				break;
 			default:
 				break;
 		}
+		return 0;
 	}
 
-	void Game::Gameover() {
-		if (m_HighScore < m_Score) {
-			m_HighScore = m_Score;
+	void Game::StartGame() {
+		curScore = 0;
+
+		// reset the player and platforms transform and speed
+		player.Reset();
+		platform0.Reset();
+		platform1.Reset();
+		platform2.Reset();
+		//platforms(platform0, platform1, platform2); //TODO: Make the platforms reset
+
+		ChangeScene(Scene::Game);
+	}
+
+	void Game::GameOver() {
+		if (highScore < curScore) {
+			highScore = curScore;
 		}
 
 		ChangeScene(Scene::Gameover);
