@@ -3,7 +3,7 @@
 namespace Tmpl8 {
 	// >> Variables (Main Scene) << //
 	// Background
-	Sprite m_TitleBGSprite(new Surface("assets/cloud_background.png"), 1);
+	Sprite m_TitleBGSprite(new Surface("assets/title_background.png"), 1);
 
 	//Buttons
 	Sprite m_StartButtonSprite(new Surface("assets/start_button.png"), 2);
