@@ -3,6 +3,7 @@
 namespace Tmpl8 {
 	// Backgrounds
 	Sprite bgTitleSprite(new Surface("assets/title_background.png"), 1);
+	Sprite bgLoseSprite(new Surface("assets/lose_background.png"), 1);
 	Sprite bgGameSprite(new Surface("assets/cloud_background.png"), 1);
 	vec2 bgGamePosition(0, 0);
 	float bgGameSlideSpeed = 100.0f;
@@ -23,8 +24,9 @@ namespace Tmpl8 {
 	Sprite retryButtonSprite(new Surface("assets/retry_button.png"), 3);
 	Sprite quitButtonSprite(new Surface("assets/quit_button.png"), 3);
 	UI startButton(startButtonSprite, vec2(300, 280));
-	UI retryButton(retryButtonSprite, vec2(300, 280));
 	UI quitButton(quitButtonSprite, vec2(300, 380));
+	UI retryButton(retryButtonSprite, vec2(164, 360));
+	UI returnButton(quitButtonSprite, vec2(410, 360));
 
 	// On start
 	void Game::Init() {
@@ -87,6 +89,8 @@ namespace Tmpl8 {
 				//screen->Print((char*) curScore, 0, 0, 0); //TODO: display score
 				break;
 			case Scene::Gameover:
+				bgLoseSprite.Draw(screen, 0, 0);
+
 				// update the retry button then check if the button was pressed
 				retryButton.Update(screen, input);
 				if (retryButton.Released()) {
@@ -94,8 +98,8 @@ namespace Tmpl8 {
 				}
 
 				// update the quit button then check if the button was pressed
-				quitButton.Update(screen, input);
-				if (quitButton.Released()) {
+				returnButton.Update(screen, input);
+				if (returnButton.Released()) {
 					ChangeScene(Scene::Title);
 				}
 				break;
@@ -110,10 +114,9 @@ namespace Tmpl8 {
 
 		// reset the player and platforms transform and speed
 		player.Reset();
-		platform0.Reset();
-		platform1.Reset();
-		platform2.Reset();
-		//platforms(platform0, platform1, platform2); //TODO: Make the platforms reset
+		for (Platform& platform : platforms) {
+			platform.Reset();
+		}
 
 		ChangeScene(Scene::Game);
 	}
