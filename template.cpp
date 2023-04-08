@@ -289,6 +289,7 @@ int main(int argc, char** argv) {
 	SDL_Texture* frameBuffer = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, ScreenWidth, ScreenHeight);
 #endif
 	int exitapp = 0;
+
 	game = new Game();
 	game->SetTarget(surface, controls);
 	timer time;

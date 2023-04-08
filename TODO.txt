@@ -17,7 +17,7 @@ Should:
 	-Death screen
 	-Add score when you hit a platform
 	-Highscore
-	Display the current score
+	-Display the current score
 	
 
 Could:

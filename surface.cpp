@@ -236,6 +236,7 @@ namespace Tmpl8 {
 		strcpy(s_Font[c][2], c3);
 		strcpy(s_Font[c][3], c4);
 		strcpy(s_Font[c][4], c5);
+
 	}
 
 	void Surface::InitCharset() {
