@@ -14,10 +14,11 @@ namespace Tmpl8 {
 
 	// Platforms
 	Sprite platformSprite(new Surface("assets/platform200x40.png"), 1);
-	Platform platform0(platformSprite, {300, 282}, {0, 1}, 40);
-	Platform platform1(platformSprite, {100, 82}, {0, 1}, 40);
-	Platform platform2(platformSprite, {500, -118}, {0, 1}, 40);
-	Platform platforms[3] = {platform0, platform1, platform2};
+	Platform platforms[3] = {
+		Platform(platformSprite, {300, 282}, {0, 1}, 40), 
+		Platform(platformSprite, {100, 82}, {0, 1}, 40), 
+		Platform(platformSprite, {500, -118}, {0, 1}, 40)
+	};
 
 	// Buttons
 	Sprite startButtonSprite(new Surface("assets/start_button.png"), 3);
@@ -98,11 +99,11 @@ namespace Tmpl8 {
 				bgGameSprite.Draw(screen, (int) bgGamePosition.x - ScreenWidth, (int) bgGamePosition.y);
 
 				// update and draw all the object in the game
-				player.Update(this, screen, input, dt);
 				for (Platform& platform : platforms) {
-					platform.Update(this, screen, player, dt);
 					player.PlatformCollision(this, platform);
+					platform.Update(this, screen, player, dt);
 				}
+				player.Update(this, screen, input, dt);
 
 				DrawScore(scoreSprite, scorePosition, curScore);
 				break;

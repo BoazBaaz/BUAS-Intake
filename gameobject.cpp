@@ -123,20 +123,18 @@ namespace Tmpl8 {
 			transform.velocity.x = -transform.velocity.x;
 		}
 
-		// if you hold space add velocity on the Y axis, once groudn collision is true build up boost 
-		if (input->GetKey(SDL_SCANCODE_SPACE)) {
-			if (!groundCollision) {
-     			transform.velocity.y = boostDropForce;
-			} else {
-				boostAvailable = true;
-				transform.velocity = { 0, 0 };
-			}
+		// if you hold space and ground collision is false, add velocity on the Y
+		if (input->GetKey(SDL_SCANCODE_SPACE) && platformGroundCollision == nullptr) {
+     		transform.velocity.y = boostDropForce;
+		} else if (input->GetKey(SDL_SCANCODE_SPACE) && platformGroundCollision != nullptr) {
+			transform.velocity.x = 0;
+			boostReady = true;
 		}
 
 		// if you release space and the ground collision is true, update the velocity and acceleration and reset the boost
-		if (input->GetKeyUp(SDL_SCANCODE_SPACE) && groundCollision) {
-			transform.velocity = (input->GetMousePos() - transform.position).normalized() * (boostAvailable * boostPower);
-			boostAvailable = false;
+		if (input->GetKeyUp(SDL_SCANCODE_SPACE) && boostReady) {
+			transform.velocity = (input->GetMousePos() - transform.position).normalized() * boostPower;
+			boostReady = false;
 		}
 
 		// update the player position
@@ -148,7 +146,7 @@ namespace Tmpl8 {
 
 	void Player::BouncePhysics(Game* game, float& dt) {
 		// add gravity to the Y axis of the velocity
-		if (!groundCollision) {
+		if (platformGroundCollision == nullptr) {
 			transform.velocity.y += (float)game->GetGravity() * dt;
 		}
 
@@ -158,11 +156,13 @@ namespace Tmpl8 {
 		// update the position using the velocity
 		transform.position += transform.velocity * speed * dt;
 
-		// reset ground collision
-		groundCollision = false;
+		if (platformGroundCollision != nullptr && boostReady) {
+			transform.position.y = platformGroundCollision->transform.position.y - spriteSize.y;
+		}
+
 	}
 
-	void Player::PlatformCollision(Game* game, Platform& platform) {
+	bool Player::PlatformCollision(Game* game, Platform& platform) {
 		vec2 centerPosition = {transform.position.x + spriteSize.x / 2.0f, transform.position.y + spriteSize.y / 2.0f};
 
 		// calculate the closest X and Y point on the obj to the player
@@ -195,12 +195,21 @@ namespace Tmpl8 {
 				if (distanceY > 0) {
 					transform.position.y = platform.transform.position.y + platform.GetSpriteSize().y;
 				} else {
-					// set the ground collision to true
-					groundCollision = true;
-
 					transform.position.y = platform.transform.position.y - spriteSize.y;
+
+					// set the platformGroundCollision to the current platform
+					platformGroundCollision = &platform;
 				}
 			}
+			return true;
+		} else {
+			// empty the platformGroundCollision
+			if (platformGroundCollision == &platform) {
+				platformGroundCollision = nullptr;
+			}
+
+			return false;
 		}
+
 	}
 }

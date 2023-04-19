@@ -73,18 +73,16 @@ namespace Tmpl8 {
 		Player(Sprite& _sprite, vec2 _position, vec2 _velocity, float _speed);
 		Player() = default;
 		~Player() = default;
-		// member data access
-		bool GetGroundCollision() { return groundCollision; }
 		// special operations
 		void Update(Game* game, Surface* screen, Input* input, float& dt);
 		void BouncePhysics(Game* game, float& dt);
-		void PlatformCollision(Game* game, Platform& a_CollisionObject);
+		bool PlatformCollision(Game* game, Platform& a_CollisionObject);
 	private:
 		// attributes
-		bool boostAvailable = false;
+		bool boostReady = false;
 		float boostPower = 30;
 		float boostDropForce = 30;
 		float groundBuffer = 0.2f;
-		bool groundCollision = false;
+		Platform* platformGroundCollision = nullptr;
 	};
 }

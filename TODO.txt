@@ -9,7 +9,7 @@ Must:
 	-Looping x posiiton
 	-Random platforms
 	-Platform go down
-	Better platform collision
+	-Better platform collision
 	-Make the platform reset
 
 Should:
