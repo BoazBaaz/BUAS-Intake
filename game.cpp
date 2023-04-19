@@ -64,7 +64,6 @@ namespace Tmpl8 {
 	// Every frame
 	int Game::Tick(float dt) {
 		screen->Clear(0);
-		std::cout << curScore << std::endl;
 
 		switch (curScene) {
 			case Scene::Title:
@@ -101,7 +100,7 @@ namespace Tmpl8 {
 				// update and draw all the object in the game
 				player.Update(this, screen, input, dt);
 				for (Platform& platform : platforms) {
-					platform.Update(screen, dt);
+					platform.Update(this, screen, player, dt);
 					player.PlatformCollision(this, platform);
 				}
 

@@ -12,7 +12,6 @@
 namespace Tmpl8 {
 	class Surface;
 	class Input;
-	class GameObject;
 
 	class Game {
 		enum class Scene { Title, Game, Gameover };
@@ -27,9 +26,9 @@ namespace Tmpl8 {
 		int Tick(float dt);
 		// special operations (game)
 		void ChangeScene(Scene newScene) { curScene = newScene; screen->Clear(0); };
-		void ScoreUp() { curScore++; }
 		void DrawScore(Sprite& sprite, vec2 position, int score);
 		void DrawDigits(vec2 position, int value);
+		void ScoreUp() { curScore++; }
 		void StartGame();
 		void GameOver();
 	private:

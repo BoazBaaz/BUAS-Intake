@@ -5,15 +5,13 @@
 namespace Tmpl8 {
 	class Input;
 	class Game;
+	class Player;
 
 	class GameObject { // base class for all other objects
 	protected:
 		enum class Shape { Rectangle, Circle };
-		struct Transform {
-			vec2 position;
-			vec2 velocity;
-		};
 	public:
+		struct Transform { vec2 position, velocity; };
 		// constructor / destructor
 		GameObject(Sprite& _sprite, vec2 _position, vec2 _velocity, float _speed, bool _isRectangle = true);	// sprite, pos, vel, speed
 		GameObject(Sprite& _sprite, vec2 _position, vec2 _velocity, bool _isRectangle = true);					// sprite, pos, vel
@@ -22,21 +20,20 @@ namespace Tmpl8 {
 		// member data access
 		Sprite& GetSprite() { return sprite; }
 		vec2 GetSpriteSize() { return spriteSize; }
-		void SetPosition(vec2 _position) { transform.position = _position; }
-		vec2 GetPosition() { return transform.position; }
-		void SetVelocity(vec2 _velocity) { transform.velocity = _velocity; }
-		vec2 GetVelocity() { return transform.velocity; }
+		void SetTransform(Transform _transform) { transform = _transform; }
+		Transform GetTransform() { return transform; }
 		void SetSpeed(float _speed) { speed = _speed; }
 		// special operations
 		void Draw(Surface* screen);
 		void Reset();
+		// attributes
 	protected:
 		// attributes
 		Sprite& sprite;
-		const vec2 spriteSize;
 		Transform transform;
-		float speed = 1.0f;
 		bool onScreen = false;
+		const vec2 spriteSize;
+		float speed = 1.0f;
 		const Shape shape;
 		// re-initializer values
 		const Transform startTransform;
@@ -68,7 +65,7 @@ namespace Tmpl8 {
 		void SetPlatformPassed(bool _platformHit) { platformPassed = _platformHit; }
 		bool GetPlatformPassed() { return platformPassed; }
 		// special operations
-		void Update(Surface* screen, float& dt);
+		void Update(Game* game, Surface* screen, Player& player, float& dt);
 	private:
 		// attributes
 		float maxRandX = (ScreenWidth - spriteSize.x) - 20;

@@ -93,7 +93,7 @@ namespace Tmpl8 {
 		Draw(screen);
 	}
 
-	void Platform::Update(Surface* screen, float& dt) {
+	void Platform::Update(Game* game, Surface* screen, Player& player, float& dt) {
 		// move the platform using the velocity
 		transform.position += transform.velocity * speed * dt;
 
@@ -103,6 +103,12 @@ namespace Tmpl8 {
 
 			transform.position = {randX, transform.position.y - 600};
 			platformPassed = false;
+		}
+
+		// check if you passed the plafrom, if you did add score
+		if (!platformPassed && player.GetTransform().position.y <= transform.position.y) {
+			game->ScoreUp();
+			platformPassed = true;
 		}
 
 		// draw the object
@@ -165,19 +171,13 @@ namespace Tmpl8 {
 		vec2 centerPosition = {transform.position.x + spriteSize.x / 2.0f, transform.position.y + spriteSize.y / 2.0f};
 
 		// calculate the closest X and Y point on the obj to the player
-		float closestX = std::max(platform.GetPosition().x, std::min(centerPosition.x, platform.GetPosition().x + platform.GetSpriteSize().x));
-		float closestY = std::max(platform.GetPosition().y, std::min(centerPosition.y, platform.GetPosition().y + platform.GetSpriteSize().y));
+		float closestX = std::max(platform.GetTransform().position.x, std::min(centerPosition.x, platform.GetTransform().position.x + platform.GetSpriteSize().x));
+		float closestY = std::max(platform.GetTransform().position.y, std::min(centerPosition.y, platform.GetTransform().position.y + platform.GetSpriteSize().y));
 		
 		// calculate the distance between the closest X and Y and the center of the player
 		float distanceX = centerPosition.x - closestX;
 		float distanceY = centerPosition.y - closestY;
 		float distance = std::sqrt((distanceX * distanceX) + (distanceY * distanceY));
-
-		// check if you passed the plafrom, if you did add score
-		if (!platform.GetPlatformPassed() && transform.position.y <= platform.GetPosition().y) {
-			game->ScoreUp();
-			platform.SetPlatformPassed(true);
-		}
 
 		// check if distance is less then the radius of the player
 		if (distance <= spriteSize.x / 2.0f) {
@@ -188,9 +188,9 @@ namespace Tmpl8 {
 
 				// determine the side of the obj the player hit, then set the position to the border of the platform
 				if (distanceX > 0) {
-					transform.position.x = platform.GetPosition().x + platform.GetSpriteSize().x;
+					transform.position.x = platform.GetTransform().position.x + platform.GetSpriteSize().x;
 				} else {
-					transform.position.x = platform.GetPosition().x - spriteSize.x;
+					transform.position.x = platform.GetTransform().position.x - spriteSize.x;
 				}
 			} else {
 				// invert the y velocity
@@ -198,12 +198,12 @@ namespace Tmpl8 {
 
 				// determine the side of the obj the player hit, then set the position to the border of the platform
 				if (distanceY > 0) {
-					transform.position.y = platform.GetPosition().y + platform.GetSpriteSize().y;
+					transform.position.y = platform.GetTransform().position.y + platform.GetSpriteSize().y;
 				} else {
 					// set the ground collision to true
 					groundCollision = true;
 
-					transform.position.y = platform.GetPosition().y - spriteSize.y;
+					transform.position.y = platform.GetTransform().position.y - spriteSize.y;
 				}
 			}
 		}
