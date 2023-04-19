@@ -8,8 +8,6 @@ namespace Tmpl8 {
 	class Player;
 
 	class GameObject { // base class for all other objects
-	protected:
-		enum class Shape { Rectangle, Circle };
 	public:
 		struct Transform { vec2 position, velocity; };
 		// constructor / destructor
@@ -20,21 +18,18 @@ namespace Tmpl8 {
 		// member data access
 		Sprite& GetSprite() { return sprite; }
 		vec2 GetSpriteSize() { return spriteSize; }
-		void SetTransform(Transform _transform) { transform = _transform; }
-		Transform GetTransform() { return transform; }
 		void SetSpeed(float _speed) { speed = _speed; }
 		// special operations
 		void Draw(Surface* screen);
 		void Reset();
 		// attributes
+		Transform transform;
 	protected:
 		// attributes
 		Sprite& sprite;
-		Transform transform;
 		bool onScreen = false;
 		const vec2 spriteSize;
 		float speed = 1.0f;
-		const Shape shape;
 		// re-initializer values
 		const Transform startTransform;
 		const float startSpeed = 1.0f;
