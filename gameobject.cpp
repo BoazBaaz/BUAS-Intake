@@ -120,6 +120,7 @@ namespace Tmpl8 {
 
 		// make the player always be inside the screen in the x axis
 		if (transform.position.x > ScreenWidth - spriteSize.x || transform.position.x < 0) {
+			transform.position.x = Max(0.0f, Min((float)ScreenWidth - spriteSize.x, transform.position.x));
 			transform.velocity.x = -transform.velocity.x;
 		}
 
