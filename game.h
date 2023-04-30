@@ -19,6 +19,8 @@ namespace Tmpl8 {
 		// member data access
 		const float& GetGravity() { return gravity; }
 		const float& GetDeceleration() { return deceleration; }
+		float GetPlatformSpeed() { return platformSpeed; }
+		int GetScore() { return curScore; }
 		// special operations (template)
 		void SetTarget(Surface* surface, Input* controls) { screen = surface; input = controls; }
 		void Init();
@@ -28,6 +30,7 @@ namespace Tmpl8 {
 		void ChangeScene(Scene newScene) { curScene = newScene; screen->Clear(0); };
 		void DrawScore(Sprite& sprite, vec2 position, int score);
 		void DrawDigits(vec2 position, int value);
+		void SpeedUp() { platformSpeed += platformSpeedIncrease / 100 * platformSpeed; }
 		void ScoreUp() { curScore++; }
 		void StartGame();
 		void GameOver();
@@ -38,6 +41,8 @@ namespace Tmpl8 {
 		Scene curScene = Scene::Title;
 		int highScore = 0;
 		int curScore = 0;
+		float platformSpeed = 40.0f;
+		float platformSpeedIncrease = 1.410148f; // the exponential increase percentage (at max 99 the speed is 160.0000904821)
 		Surface* screen;
 		Input* input;
 	};

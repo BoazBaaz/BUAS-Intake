@@ -15,9 +15,9 @@ namespace Tmpl8 {
 	// Platforms
 	Sprite platformSprite(new Surface("assets/platform200x40.png"), 1);
 	Platform platforms[3] = {
-		Platform(platformSprite, {300, 282}, {0, 1}, 40), 
-		Platform(platformSprite, {100, 82}, {0, 1}, 40), 
-		Platform(platformSprite, {500, -118}, {0, 1}, 40)
+		Platform(platformSprite, {300, 282}, {0, 1}), 
+		Platform(platformSprite, {100, 82}, {0, 1}), 
+		Platform(platformSprite, {500, -118}, {0, 1})
 	};
 
 	// Buttons
@@ -190,8 +190,9 @@ namespace Tmpl8 {
 
 	void Game::StartGame() {
 		curScore = 0;
+		platformSpeed = 40.0f;
 
-		// reset the player and platforms transform and speed
+		// reset the player and platforms transform
 		player.Reset();
 		for (Platform& platform : platforms) {
 			platform.Reset();

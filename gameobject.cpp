@@ -2,15 +2,6 @@
 
 namespace Tmpl8 {
 
-	GameObject::GameObject(Sprite& _sprite, vec2 _position, vec2 _velocity, float _speed, bool _isRectangle) :
-		sprite(_sprite),
-		startTransform{_position, _velocity},
-		transform{_position, _velocity},
-		startSpeed(_speed),
-		speed(_speed),
-		spriteSize((float)_sprite.GetWidth(), (float)_sprite.GetHeight()) {
-	}
-
 	GameObject::GameObject(Sprite& _sprite, vec2 _position, vec2 _velocity, bool _isRectangle) :
 		sprite(_sprite),
 		startTransform{_position, _velocity},
@@ -26,11 +17,12 @@ namespace Tmpl8 {
 	}
 
 	Player::Player(Sprite& _sprite, vec2 _position, vec2 _velocity, float _speed) :
-		GameObject(_sprite, _position, _velocity, _speed, false) {
+		GameObject(_sprite, _position, _velocity, false),
+		speed(_speed) {
 	}
 
-	Platform::Platform(Sprite& _sprite, vec2 _position, vec2 _velocity, float _speed) :
-		GameObject(_sprite, _position, _velocity, _speed) {
+	Platform::Platform(Sprite& _sprite, vec2 _position, vec2 _velocity) :
+		GameObject(_sprite, _position, _velocity) {
 	}
 
 	UI::UI(Sprite& _sprite, vec2 _position, bool _isRectangle) :
@@ -55,9 +47,8 @@ namespace Tmpl8 {
 	}
 
 	void GameObject::Reset() {
-		// reset the transform and speed
+		// reset the transform
 		transform = startTransform;
-		speed = startSpeed;
 	}
 
 	void UI::Update(Surface* screen, Input* input) {
@@ -92,7 +83,7 @@ namespace Tmpl8 {
 
 	void Platform::Update(Game* game, Surface* screen, Player& player, float& dt) {
 		// move the platform using the velocity
-		transform.position += transform.velocity * speed * dt;
+		transform.position += transform.velocity * game->GetPlatformSpeed() * dt;
 
 		// set the platform at a random value on the x axis above the screen
 		if (transform.position.y >= ScreenHeight) { 
@@ -103,8 +94,10 @@ namespace Tmpl8 {
 		}
 
 		// check if you passed the plafrom, if you did add score
-		if (!platformPassed && player.transform.position.y <= transform.position.y) {
+		if (!platformPassed && player.transform.position.y <= transform.position.y && game->GetScore() < 99) {
+			game->SpeedUp();
 			game->ScoreUp();
+
 			platformPassed = true;
 		}
 
